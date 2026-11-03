@@ -65,7 +65,7 @@ jobs:
             fi
           else
             gh release create "$RELEASE_TAG" "$asset" \
-              --title "Vacuula ${RELEASE_TAG#v}" \
+              --title "Vacuula Client ${RELEASE_TAG#v}" \
               --notes-file "$RUNNER_TEMP/release-notes.md" \
               --verify-tag
           fi

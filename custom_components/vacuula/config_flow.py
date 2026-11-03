@@ -16,7 +16,7 @@ from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from yarl import URL
 
 from .client import VacuulaClient, VacuulaError
-from .const import CONF_URL, DEFAULT_URL, DOMAIN
+from .const import CONF_URL, DEFAULT_URL, DOMAIN, NAME
 from .discovery import async_discover_servers
 
 CONF_URL_ALIASES = "url_aliases"
@@ -103,7 +103,7 @@ class VacuulaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configure one server, automatically discovering its robots."""
 
     VERSION = 1
-    MINOR_VERSION = 3
+    MINOR_VERSION = 4
 
     def __init__(self) -> None:
         """Initialize discovery candidates, aliases and per-flow DNS results."""
@@ -351,7 +351,7 @@ class VacuulaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data: dict[str, Any] = {CONF_URL: base_url, "robot_ids": robot_ids}
         if len(aliases) > 1:
             data[CONF_URL_ALIASES] = sorted(aliases)
-        return self.async_create_entry(title="Vacuula", data=data)
+        return self.async_create_entry(title=NAME, data=data)
 
     async def async_step_zeroconf(
         self, discovery_info: ZeroconfServiceInfo

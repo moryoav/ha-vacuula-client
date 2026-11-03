@@ -1,4 +1,4 @@
-ha-vacuula
+ha-vacuula-client
 
 The independently written Home Assistant integration code is provided under
 the MIT License in LICENSE. Copyright (c) 2026 moryoav.

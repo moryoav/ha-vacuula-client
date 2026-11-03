@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.17
+
+- Renamed the integration to Vacuula Client in Home Assistant and HACS, and updated repository links to `moryoav/ha-vacuula-client`.
+- Updated existing default entry titles to Vacuula Client while preserving custom titles, the `vacuula` domain, entity identities and settings.
+
 ## 0.1.16
 
 - Added HACS validation to the shared checks so releases require passing HACS, Hassfest and Python checks before publication.

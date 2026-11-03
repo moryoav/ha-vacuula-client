@@ -75,6 +75,7 @@ async def test_user(hass, client, no_discovery):
         )
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["title"] == "Vacuula Client"
     assert result["data"] == {
         "url": "http://test.local:81",
         "robot_ids": ["TEST-robot"],
@@ -137,6 +138,7 @@ async def test_zeroconf(hass, client):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["title"] == "Vacuula Client"
 
 
 async def test_discovery_errors(hass, client):

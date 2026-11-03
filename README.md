@@ -1,4 +1,4 @@
-# Vacuula for Home Assistant
+# Vacuula Client for Home Assistant
 
 **I maintain this independent, fan-made repository. It is not affiliated with the Vacuula team and has not been reviewed, checked, or endorsed by them.**
 
@@ -30,14 +30,14 @@ robot credentials, or cloud connection.
 
 #### HACS (recommended)
 
-**Vacuula is not in the default HACS catalog. Add this repository as a custom
+**Vacuula Client is not in the default HACS catalog. Add this repository as a custom
 repository with type Integration before downloading it.**
 
-[![Open the Vacuula HACS repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=moryoav&repository=ha-vacuula&category=integration)
+[![Open the Vacuula Client HACS repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=moryoav&repository=ha-vacuula-client&category=integration)
 
 1. Select the button above. If prompted, confirm **Add** to add the custom
    repository to HACS.
-2. Open **Vacuula** in HACS and choose **Download**.
+2. Open **Vacuula Client** in HACS and choose **Download**.
 3. Restart Home Assistant.
 
 If you prefer to add the custom repository manually:
@@ -47,15 +47,15 @@ If you prefer to add the custom repository manually:
 3. Enter this repository URL:
 
    ```text
-   https://github.com/moryoav/ha-vacuula
+   https://github.com/moryoav/ha-vacuula-client
    ```
 
 4. Select **Integration** as the type, then select **Add**.
-5. Open **Vacuula** in HACS, choose **Download**, and restart Home Assistant.
+5. Open **Vacuula Client** in HACS, choose **Download**, and restart Home Assistant.
 
 #### Manual installation (alternative)
 
-Download **vacuula.zip** from the [latest release](https://github.com/moryoav/ha-vacuula/releases/latest)
+Download **vacuula.zip** from the [latest release](https://github.com/moryoav/ha-vacuula-client/releases/latest)
 and extract its contents into:
 
 ```text
@@ -73,13 +73,13 @@ Then restart Home Assistant and continue with setup below.
 
 ### 2. Add the integration
 
-[![Add the Vacuula integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vacuula)
+[![Add the Vacuula Client integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vacuula)
 
-Use the button above after Home Assistant restarts. It opens the **Vacuula**
+Use the button above after Home Assistant restarts. It opens the **Vacuula Client**
 setup flow, which searches for local servers automatically.
 
 You can also open **Settings > Devices & services** and configure the discovered
-**Vacuula** server, or choose **Add integration > Vacuula**.
+**Vacuula Client** integration, or choose **Add integration > Vacuula Client**.
 
 1. When new servers are found, choose **Use a discovered server** and confirm
    it. If several servers are found, choose one first. Home Assistant reads the
@@ -468,7 +468,7 @@ robot identities, map geometry, and complete schedule contents. Review any data
 before sharing it. `get_data` responses are intentionally richer than diagnostics.
 
 To remove the integration, delete its entry in **Settings > Devices & services**.
-To remove the custom code as well, remove **Vacuula** from HACS, or delete
+To remove the custom code as well, remove **Vacuula Client** from HACS, or delete
 `/config/custom_components/vacuula` if installed manually, then restart Home
 Assistant. Removing the integration does not delete robots,
 maps, or schedules from Vacuula. A robot no longer listed by the server can be

@@ -1,6 +1,6 @@
 # Code of conduct
 
-I want Vacuula for Home Assistant to be useful and welcoming to people with
+I want Vacuula Client for Home Assistant to be useful and welcoming to people with
 different backgrounds, experience levels and Home Assistant setups. I ask
 everyone taking part in issues, pull requests and other project spaces to
 treat each other with respect.

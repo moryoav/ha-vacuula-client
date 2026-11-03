@@ -13,7 +13,7 @@ The [validation record](docs/local-validation.md) describes what has been tested
 If a problem also occurs in the Vacuula app, it may belong in the
 [upstream Vacuula repository](https://github.com/vacuula/vacuula/issues).
 For a problem limited to Home Assistant, use this repository's
-[bug report form](https://github.com/moryoav/ha-vacuula/issues/new?template=bug_report.yml).
+[bug report form](https://github.com/moryoav/ha-vacuula-client/issues/new?template=bug_report.yml).
 
 Please include:
 
@@ -34,7 +34,7 @@ Gen3 and Gen4 robots through the local Vacuula API. Gen4 behavior is verified
 against source and fixtures; I do not currently have Gen4 hardware for testing.
 Available features also depend on the robot's reported capabilities.
 
-Use the [feature request form](https://github.com/moryoav/ha-vacuula/issues/new?template=feature_request.yml)
+Use the [feature request form](https://github.com/moryoav/ha-vacuula-client/issues/new?template=feature_request.yml)
 for an improvement, with the workflow you want to use and the hardware involved.
 I welcome clear reports of accessibility barriers too; see
 [ACCESSIBILITY.md](ACCESSIBILITY.md).

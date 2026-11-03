@@ -1,4 +1,4 @@
-"""Upgrade old house defaults without silently opting out of no-go lines."""
+"""Upgrade legacy defaults, recovery guards and integration entry titles."""
 
 from copy import deepcopy
 
@@ -29,7 +29,7 @@ async def test_old_house_default_becomes_automatic_and_keeps_other_preferences(h
     entry.add_to_hass(hass)
     assert await async_migrate_entry(hass, entry)
     assert entry.version == 1
-    assert entry.minor_version == 3
+    assert entry.minor_version == 4
     expected = deepcopy(original)
     expected["cleaning_options"]["first"]["category"] = "auto"
     assert dict(entry.options) == expected
@@ -44,7 +44,7 @@ async def test_empty_or_invalid_old_defaults_do_not_break_upgrade(hass, options)
     entry = MockConfigEntry(domain=DOMAIN, options=options, minor_version=1)
     entry.add_to_hass(hass)
     assert await async_migrate_entry(hass, entry)
-    assert entry.minor_version == 3
+    assert entry.minor_version == 4
     assert dict(entry.options) == options
 
 
@@ -84,13 +84,49 @@ async def test_legacy_pending_uploads_gain_unknown_operation_fence(hass, minor_v
     )
     entry.add_to_hass(hass)
     assert await async_migrate_entry(hass, entry)
-    assert entry.minor_version == 3
+    assert entry.minor_version == 4
     assert entry.options["pending_map_operations"] == {
         "robot": {"action": "unknown", "map_id": "map1"}
     }
     for key, value in original.items():
         assert entry.options[key] == value
     assert old == original
+
+
+@pytest.mark.parametrize(
+    ("title", "expected_title"),
+    [
+        ("Vacuula", "Vacuula Client"),
+        ("Kitchen server", "Kitchen server"),
+        ("Vacuula Client", "Vacuula Client"),
+        ("", ""),
+    ],
+)
+async def test_rename_keeps_custom_titles_identity_and_settings(
+    hass, title, expected_title
+):
+    """Rename only the old default title without changing a configured server."""
+    data = {"url": "http://test.local:81", "robot_ids": ["TEST-robot"]}
+    options = {"cleaning_options": {"TEST-robot": {"category": "house"}}}
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        version=1,
+        minor_version=3,
+        title=title,
+        unique_id=data["url"],
+        data=data,
+        options=options,
+    )
+    entry.add_to_hass(hass)
+    entry_id = entry.entry_id
+    assert await async_migrate_entry(hass, entry)
+    assert entry.title == expected_title
+    assert entry.version == 1
+    assert entry.minor_version == 4
+    assert entry.entry_id == entry_id
+    assert entry.unique_id == data["url"]
+    assert dict(entry.data) == data
+    assert dict(entry.options) == options
 
 
 async def test_migration_keeps_existing_operation_evidence(hass):

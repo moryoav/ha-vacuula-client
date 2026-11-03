@@ -505,4 +505,4 @@ simulated.
 
 ## Quality target
 
-The implementation follows the current quality-scale checklist and has no official tier claim. Public brands submission, separately published typed client packaging, and formal Core assessment remain pending. Source, tests and documentation are maintained in `moryoav/ha-vacuula` while owner testing continues.
+The implementation follows the current quality-scale checklist and has no official tier claim. Public brands submission, separately published typed client packaging, and formal Core assessment remain pending. Source, tests and documentation are maintained in `moryoav/ha-vacuula-client` while owner testing continues.

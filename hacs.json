@@ -1,5 +1,5 @@
 {
-  "name": "Vacuula",
+  "name": "Vacuula Client",
   "homeassistant": "2026.10.2",
   "hide_default_branch": true,
   "zip_release": true,

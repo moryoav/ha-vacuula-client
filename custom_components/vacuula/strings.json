@@ -1,5 +1,5 @@
 {
-  "title": "Vacuula",
+  "title": "Vacuula Client",
   "config": {
     "step": {
       "user": {
@@ -79,10 +79,10 @@
       "message": "Vacuula could not confirm the action. Check the app and the robot's current state before trying again."
     },
     "unknown_robot": {
-      "message": "Choose a robot managed by the Vacuula integration."
+      "message": "Choose a robot managed by the Vacuula Client integration."
     },
     "entry_not_loaded": {
-      "message": "The selected Vacuula integration is not loaded."
+      "message": "The selected Vacuula Client integration is not loaded."
     },
     "unsupported_action": {
       "message": "This action or setting is not supported by this robot."

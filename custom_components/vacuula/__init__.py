@@ -11,7 +11,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .client import VacuulaClient, VacuulaError
-from .const import CONF_URL, DOMAIN, PLATFORMS
+from .const import CONF_URL, DOMAIN, NAME, PLATFORMS
 from .coordinator import VacuulaCoordinator
 from .services import async_setup_services
 
@@ -27,7 +27,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 async def async_migrate_entry(hass: HomeAssistant, entry: VacuulaConfigEntry) -> bool:
-    """Do not reinterpret an old house default as consent to ignore saved maps."""
+    """Upgrade legacy defaults, recovery guards and the default integration title."""
     if entry.version != 1:
         return False
     if entry.minor_version < 2:
@@ -47,6 +47,12 @@ async def async_migrate_entry(hass: HomeAssistant, entry: VacuulaConfigEntry) ->
                 operations.setdefault(serial, {"action": "unknown", "map_id": map_id})
             options["pending_map_operations"] = operations
         hass.config_entries.async_update_entry(entry, options=options, minor_version=3)
+    if entry.minor_version < 4:
+        hass.config_entries.async_update_entry(
+            entry,
+            title=NAME if entry.title == "Vacuula" else entry.title,
+            minor_version=4,
+        )
     return True
 
 

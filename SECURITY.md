@@ -5,7 +5,7 @@ I support security fixes for the latest published release and the current
 
 ## Report a vulnerability
 
-Please use [GitHub's private vulnerability report form](https://github.com/moryoav/ha-vacuula/security/advisories/new).
+Please use [GitHub's private vulnerability report form](https://github.com/moryoav/ha-vacuula-client/security/advisories/new).
 I ask that exploit details, credentials and private configuration stay out of
 public issues while I investigate.
 

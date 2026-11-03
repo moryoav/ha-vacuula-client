@@ -14,7 +14,7 @@ currently the only bundled translation.
 
 ## Reporting a barrier
 
-Please use the [bug report form](https://github.com/moryoav/ha-vacuula/issues/new?template=bug_report.yml)
+Please use the [bug report form](https://github.com/moryoav/ha-vacuula-client/issues/new?template=bug_report.yml)
 and select Accessibility as the affected area. Include the Home Assistant and
 integration versions, the control or task involved, and your browser or app and
 assistive technology where relevant. Describe what prevents completing the
