@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.16
+
+- Added HACS validation to the shared checks so releases require passing HACS, Hassfest and Python checks before publication.
+
 ## 0.1.15
 
 - Added tagged `vacuula.zip` release assets, HACS ZIP installation metadata and a release workflow gated by the Python checks and Hassfest. Preserved artwork licenses and attribution in every archive.

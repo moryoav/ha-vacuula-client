@@ -16,6 +16,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  hacs:
+    name: HACS validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate the integration
+        uses: hacs/action@main
+        with:
+          category: integration
+
   python:
     name: Python checks
     runs-on: ubuntu-latest
