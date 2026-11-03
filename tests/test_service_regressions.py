@@ -80,7 +80,7 @@ async def test_local_schedule_uses_ha_offset_and_wraps_week(
 ):
     """Timezone conversion preserves weekly instants, including midnight edges."""
     freezer.move_to(now)
-    hass.config.time_zone = timezone
+    await hass.config.async_set_time_zone(timezone)
     event = {"mode": 2, "day": day, "startTime": time, "boundaryId": "zone1"}
     await _call(hass, action_setup, "set_schedule", events=[event])
     assert action_setup[0].command_payloads[-1] == {
@@ -97,7 +97,7 @@ async def test_local_schedule_uses_ha_offset_and_wraps_week(
 
 async def test_raw_utc_schedule_can_be_round_tripped(hass, action_setup):
     """An explicit UTC basis preserves schedules returned by get_data."""
-    hass.config.time_zone = "Asia/Jerusalem"
+    await hass.config.async_set_time_zone("Asia/Jerusalem")
     events = [{"mode": 1, "day": 0, "startTime": "09:00"}]
     await _call(hass, action_setup, "set_schedule", events=events, time_basis="utc")
     assert action_setup[0].command_payloads[-1]["params"]["events"] == events
@@ -407,7 +407,7 @@ async def test_returned_gen3_boundary_id_is_preserved_on_schedule_write(
 ):
     """Normalize an identified response zone, without changing caller data."""
     freezer.move_to("2026-10-19T09:00:00Z")
-    hass.config.time_zone = "Asia/Jerusalem"
+    await hass.config.async_set_time_zone("Asia/Jerusalem")
     coordinator = action_setup[0]
     event = {
         "mode": 1,

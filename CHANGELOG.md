@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.18
+
+- Fixed blocking timezone loads in the Generation 3 schedule action. Reused Home Assistant's cached local timezone and resolved the server timezone asynchronously before converting schedule times.
+- Preserved legacy UTC schedules, raw robot clock slots, empty schedule replacements and rejection of unknown clock metadata.
+
 ## 0.1.17
 
 - Renamed the integration to Vacuula Client in Home Assistant and HACS, and updated repository links to `moryoav/ha-vacuula-client`.

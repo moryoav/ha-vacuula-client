@@ -2,10 +2,13 @@
 
 # ruff: noqa: F811
 
+import asyncio
 from copy import deepcopy
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.exceptions import ServiceValidationError
+from homeassistant.util import dt as dt_util
 from test_service_regressions import _call, action_setup  # noqa: F401
 
 
@@ -16,7 +19,7 @@ async def test_local_slots_follow_the_server_clock(
 ):  # noqa: F811
     """Keep matching local times on new servers and legacy UTC times on old ones."""
     freezer.move_to(now)
-    hass.config.time_zone = "Asia/Jerusalem"
+    await hass.config.async_set_time_zone("Asia/Jerusalem")
     coordinator = action_setup[0]
     coordinator.server_info = {"version": version, "timezone": "Asia/Jerusalem"}
     event = {"mode": 1, "day": 1, "startTime": "09:00"}
@@ -61,7 +64,7 @@ async def test_explicit_timezones_preserve_weekly_instants(  # noqa: F811
 ):
     """Convert weekly slots across UTC, local zones and fractional offsets."""
     freezer.move_to("2026-01-19T09:00:00Z")
-    hass.config.time_zone = input_zone
+    await hass.config.async_set_time_zone(input_zone)
     coordinator = action_setup[0]
     coordinator.server_info = {"version": "1.1.0", "timezone": robot_zone}
     await _call(
@@ -74,6 +77,91 @@ async def test_explicit_timezones_preserve_weekly_instants(  # noqa: F811
     assert coordinator.command_payloads[-1]["params"]["events"] == [
         {"mode": 2, "day": expected_day, "startTime": expected_time}
     ]
+
+
+@pytest.mark.parametrize(
+    ("basis", "expected_time", "default_zone_lookups"),
+    [("local", "17:30", 1), ("utc", "19:30", 0)],
+)
+async def test_server_timezone_is_awaited_before_writing_schedule(  # noqa: F811
+    hass, action_setup, freezer, basis, expected_time, default_zone_lookups
+):
+    """Load the server zone asynchronously and reuse HA's cached local zone."""
+    freezer.move_to("2026-01-19T09:00:00Z")
+    await hass.config.async_set_time_zone("Asia/Jerusalem")
+    server_timezone = await dt_util.async_get_time_zone("America/New_York")
+    coordinator = action_setup[0]
+    coordinator.server_info = {"version": "1.1.0", "timezone": "America/New_York"}
+
+    async def load_timezone(timezone_name):
+        """Yield control before returning a zone, with no schedule write yet."""
+        coordinator.async_command.assert_not_awaited()
+        await asyncio.sleep(0)
+        return server_timezone
+
+    with (
+        patch(
+            "custom_components.vacuula.services.dt_util.async_get_time_zone",
+            new=AsyncMock(side_effect=load_timezone),
+        ) as async_lookup,
+        patch(
+            "custom_components.vacuula.services.dt_util.get_time_zone",
+            side_effect=AssertionError("Synchronous timezone lookup on the event loop"),
+        ),
+        patch(
+            "custom_components.vacuula.services.dt_util.get_default_time_zone",
+            wraps=dt_util.get_default_time_zone,
+        ) as default_zone,
+    ):
+        await _call(
+            hass,
+            action_setup,
+            "set_schedule",
+            time_basis=basis,
+            events=[{"mode": 1, "day": 0, "startTime": "00:30"}],
+        )
+    async_lookup.assert_awaited_once_with("America/New_York")
+    assert default_zone.call_count == default_zone_lookups
+    assert coordinator.command_payloads[-1]["params"]["events"] == [
+        {"mode": 1, "day": 6, "startTime": expected_time}
+    ]
+
+
+@pytest.mark.parametrize(
+    ("server_info", "basis", "clear"),
+    [
+        ({"version": "1.0.0", "timezone": "Invalid/Timezone"}, "local", False),
+        ({"version": "1.0.0", "timezone": "Invalid/Timezone"}, "utc", False),
+        ({}, "robot", False),
+        ({"version": "1.1.0", "timezone": "Invalid/Timezone"}, "robot", False),
+        ({}, "local", True),
+        ({"version": "1.1.0", "timezone": "Invalid/Timezone"}, "local", True),
+    ],
+)
+async def test_unneeded_timezones_are_not_loaded(  # noqa: F811
+    hass, action_setup, server_info, basis, clear
+):
+    """Skip server-zone loads for legacy UTC, raw slots and empty schedules."""
+    await hass.config.async_set_time_zone("UTC")
+    coordinator = action_setup[0]
+    coordinator.server_info = server_info
+    events = [] if clear else [{"mode": 1, "day": 1, "startTime": "09:00"}]
+    with (
+        patch(
+            "custom_components.vacuula.services.dt_util.async_get_time_zone",
+            new=AsyncMock(
+                side_effect=AssertionError("Unneeded server timezone lookup")
+            ),
+        ) as async_lookup,
+        patch(
+            "custom_components.vacuula.services.dt_util.get_default_time_zone",
+            wraps=dt_util.get_default_time_zone,
+        ) as default_zone,
+    ):
+        await _call(hass, action_setup, "set_schedule", time_basis=basis, events=events)
+    async_lookup.assert_not_awaited()
+    assert default_zone.call_count == int(bool(events) and basis == "local")
+    assert coordinator.command_payloads[-1]["params"]["events"] == events
 
 
 @pytest.mark.parametrize("version", ["1.0.0", "1.1.0"])

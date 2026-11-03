@@ -5,7 +5,6 @@ from contextlib import suppress
 from copy import deepcopy
 from datetime import timedelta, tzinfo
 from typing import Any, cast
-from zoneinfo import ZoneInfo
 
 import probatio as vol
 from awesomeversion import AwesomeVersion, AwesomeVersionException
@@ -195,12 +194,12 @@ def _clean_command(
 
 
 def _gen3_schedule_events(
-    hass: HomeAssistant, data: dict[str, Any], server_info: dict[str, Any]
+    data: dict[str, Any], robot_timezone: tzinfo
 ) -> list[dict[str, Any]]:
     """Translate weekly clock slots to the server version's Gen3 schedule clock.
 
-    Vacuula 1.1.0-b3 and later use the robot's local timezone; older versions
-    use UTC. Convert explicit local or UTC inputs with current timezone offsets.
+    The caller resolves the server's clock zone asynchronously before conversion.
+    Convert explicit local or UTC inputs with current timezone offsets.
     The robot time basis preserves raw clock slots returned by get_data.
     Normalize a returned boundary object to the writable boundaryId. Never drop
     an unresolved or conflicting zone while replacing the complete schedule.
@@ -218,26 +217,8 @@ def _gen3_schedule_events(
             event["boundaryId"] = boundary_id
     if not events or data["time_basis"] == "robot":
         return events
-    version = server_info.get("version")
-    if not isinstance(version, str):
-        raise _error("schedule_clock_unknown")
-    try:
-        local_clock = AwesomeVersion(version) >= AwesomeVersion("1.1.0-b3")
-    except AwesomeVersionException as err:
-        raise _error("schedule_clock_unknown") from err
-    robot_timezone: tzinfo = dt_util.UTC
-    if local_clock:
-        timezone_name = server_info.get("timezone")
-        timezone = (
-            dt_util.get_time_zone(timezone_name)
-            if isinstance(timezone_name, str)
-            else None
-        )
-        if timezone is None:
-            raise _error("schedule_clock_unknown")
-        robot_timezone = timezone
     input_timezone = (
-        ZoneInfo(hass.config.time_zone)
+        dt_util.get_default_time_zone()
         if data["time_basis"] == "local"
         else dt_util.UTC
     )
@@ -473,14 +454,31 @@ def async_setup_services(hass: HomeAssistant) -> None:
                 )
             elif action == "set_schedule":
                 _require_generation(robot, GEN3)
+                robot_timezone: tzinfo = dt_util.UTC
+                if data["events"] and data["time_basis"] != "robot":
+                    version = coordinator.server_info.get("version")
+                    if not isinstance(version, str):
+                        raise _error("schedule_clock_unknown")
+                    try:
+                        local_clock = AwesomeVersion(version) >= AwesomeVersion(
+                            "1.1.0-b3"
+                        )
+                    except AwesomeVersionException as err:
+                        raise _error("schedule_clock_unknown") from err
+                    if local_clock:
+                        timezone_name = coordinator.server_info.get("timezone")
+                        if not isinstance(timezone_name, str):
+                            raise _error("schedule_clock_unknown")
+                        timezone = await dt_util.async_get_time_zone(timezone_name)
+                        if timezone is None:
+                            raise _error("schedule_clock_unknown")
+                        robot_timezone = timezone
                 result = await coordinator.async_command(
                     serial,
                     {
                         "cmd": "setSchedule",
                         "params": {
-                            "events": _gen3_schedule_events(
-                                hass, data, coordinator.server_info
-                            )
+                            "events": _gen3_schedule_events(data, robot_timezone)
                         },
                     },
                 )
