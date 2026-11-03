@@ -470,7 +470,11 @@ def async_setup_services(hass: HomeAssistant) -> None:
                         if not isinstance(timezone_name, str):
                             raise _error("schedule_clock_unknown")
                         timezone = await dt_util.async_get_time_zone(timezone_name)
-                        if timezone is None:
+                        if (
+                            timezone is None
+                            or coordinator.server_info.get("version") != version
+                            or coordinator.server_info.get("timezone") != timezone_name
+                        ):
                             raise _error("schedule_clock_unknown")
                         robot_timezone = timezone
                 result = await coordinator.async_command(

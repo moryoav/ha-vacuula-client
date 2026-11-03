@@ -159,9 +159,58 @@ async def test_unneeded_timezones_are_not_loaded(  # noqa: F811
         ) as default_zone,
     ):
         await _call(hass, action_setup, "set_schedule", time_basis=basis, events=events)
-    async_lookup.assert_not_awaited()
+    async_lookup.assert_not_called()
     assert default_zone.call_count == int(bool(events) and basis == "local")
     assert coordinator.command_payloads[-1]["params"]["events"] == events
+
+
+@pytest.mark.parametrize(
+    ("updated_info", "reject"),
+    [
+        ({"version": "1.0.0", "timezone": "America/New_York"}, True),
+        ({"version": "1.1.0", "timezone": "America/Chicago"}, True),
+        ({}, True),
+        (
+            {"version": "1.1.0", "timezone": "America/New_York", "robots": 2},
+            False,
+        ),
+    ],
+)
+async def test_clock_metadata_is_rechecked_after_timezone_lookup(  # noqa: F811
+    hass, action_setup, freezer, updated_info, reject
+):
+    """Reject clock changes during lookup while allowing unchanged clock metadata."""
+    freezer.move_to("2026-01-19T09:00:00Z")
+    server_timezone = await dt_util.async_get_time_zone("America/New_York")
+    coordinator = action_setup[0]
+    coordinator.server_info = {"version": "1.1.0", "timezone": "America/New_York"}
+    events = [{"mode": 1, "day": 0, "startTime": "00:30"}]
+
+    async def replace_server_info(timezone_name):
+        """Simulate a metadata poll completing while the zone lookup yields."""
+        await asyncio.sleep(0)
+        coordinator.server_info = dict(updated_info)
+        return server_timezone
+
+    with patch(
+        "custom_components.vacuula.services.dt_util.async_get_time_zone",
+        new=AsyncMock(side_effect=replace_server_info),
+    ) as async_lookup:
+        if reject:
+            with pytest.raises(ServiceValidationError) as error:
+                await _call(
+                    hass, action_setup, "set_schedule", time_basis="utc", events=events
+                )
+            assert error.value.translation_key == "schedule_clock_unknown"
+            coordinator.async_command.assert_not_awaited()
+        else:
+            await _call(
+                hass, action_setup, "set_schedule", time_basis="utc", events=events
+            )
+            assert coordinator.command_payloads[-1]["params"]["events"] == [
+                {"mode": 1, "day": 6, "startTime": "19:30"}
+            ]
+    async_lookup.assert_awaited_once_with("America/New_York")
 
 
 @pytest.mark.parametrize("version", ["1.0.0", "1.1.0"])
