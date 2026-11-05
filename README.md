@@ -6,7 +6,7 @@
   <img src="custom_components/vacuula_client/brand/icon@2x.png" alt="Vacuula vampire robot" width="128" height="128">
 </p>
 
-[![HACS custom repository](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=flat-square)](#installation)
+[![HACS default repository](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](#installation)
 
 ---
 
@@ -57,17 +57,19 @@ Robots, maps and schedules stored on the Vacuula server are preserved.
 
 #### HACS (recommended)
 
-**Vacuula Client is not in the default HACS catalog. Add this repository as a custom
-repository with type Integration before downloading it.**
+Vacuula Client is available in the default HACS catalog, so no custom repository
+setup is required.
 
 [![Open the Vacuula Client HACS repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=moryoav&repository=ha-vacuula-client&category=integration)
 
-1. Select the button above. If prompted, confirm **Add** to add the custom
-   repository to HACS.
-2. Open **Vacuula Client** in HACS and choose **Download**.
+1. Open **HACS** and search for **Vacuula Client**, or select the button above.
+2. Select **Vacuula Client** and choose **Download**.
 3. Restart Home Assistant.
 
-If you prefer to add the custom repository manually:
+##### Custom repository fallback
+
+If Vacuula Client does not appear in your HACS catalog yet, add this repository
+manually:
 
 1. Open **HACS** in Home Assistant.
 2. Open the three-dot menu in the top right and select **Custom repositories**.
