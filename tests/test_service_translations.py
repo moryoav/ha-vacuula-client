@@ -7,7 +7,7 @@ import yaml
 from homeassistant.helpers.translation import async_get_translations
 from homeassistant.setup import async_setup_component
 
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.const import DOMAIN
 
 ROOT = Path(__file__).parents[1] / "custom_components" / DOMAIN
 
@@ -37,6 +37,9 @@ def test_every_action_field_and_option_is_translated():
     strings = load_strings()
     assert set(services) == set(strings["services"])
     for service, spec in services.items():
+        assert (
+            spec["fields"]["device_id"]["selector"]["device"]["integration"] == DOMAIN
+        )
         texts = strings["services"][service]
         assert texts["name"] and texts["description"]
         assert set(spec["fields"]) == set(texts["fields"])

@@ -6,7 +6,7 @@ from aiohttp import web
 from aiohttp.test_utils import TestServer
 from test_client import make_client
 
-from custom_components.vacuula.client import (
+from custom_components.vacuula_client.client import (
     REQUEST_TIMEOUT,
     CannotConnect,
     CommandError,

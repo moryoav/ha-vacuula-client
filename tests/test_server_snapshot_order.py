@@ -6,8 +6,8 @@ from copy import deepcopy
 import pytest
 from test_coordinator import coordinator  # noqa: F401
 
-from custom_components.vacuula.const import GEN4
-from custom_components.vacuula.data import RobotData
+from custom_components.vacuula_client.const import GEN4
+from custom_components.vacuula_client.data import RobotData
 
 
 @pytest.mark.parametrize("connected", [False, True])

@@ -2,7 +2,7 @@
 
 from homeassistant.const import Platform
 
-DOMAIN = "vacuula"
+DOMAIN = "vacuula_client"
 NAME = "Vacuula Client"
 CONF_URL = "url"
 # Vacuula 1.1 defaults to app port 8050; discovery preserves other actual ports.

@@ -4,7 +4,7 @@ import pytest
 from homeassistant.helpers import device_registry as dr
 from test_integration import loaded  # noqa: F401
 
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
 
 
 @pytest.mark.parametrize("loaded", [GEN3, GEN4], indirect=True)

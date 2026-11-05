@@ -11,21 +11,21 @@ from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
 from test_integration import loaded as integration_loaded
 
-from custom_components.vacuula import data as robot_data
-from custom_components.vacuula.client import (
+from custom_components.vacuula_client import data as robot_data
+from custom_components.vacuula_client.client import (
     CannotConnect,
     CommandError,
     CommandTimedOut,
 )
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.data import (
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.data import (
     RETURN_PENDING_SECONDS,
     RETURN_TRIP_SECONDS,
     RobotData,
     begin_return_trip,
     track_return_trip,
 )
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 SERIAL = "TEST-robot"
 loaded = integration_loaded
@@ -140,7 +140,8 @@ async def test_missing_native_home_flag_never_allows_movement(
     server.client.async_command.side_effect = command
     server.client.async_command.reset_mock()
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         with pytest.raises(ServiceValidationError) as error:
             await coordinator.async_return_to_base(SERIAL)
@@ -504,7 +505,8 @@ async def test_disconnect_during_home_state_reads_sends_no_home(
     server.client.async_command.side_effect = command
     server.client.async_command.reset_mock()
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         with pytest.raises(HomeAssistantError) as error:
             await coordinator.async_return_to_base(SERIAL)

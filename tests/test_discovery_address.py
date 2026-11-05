@@ -8,8 +8,8 @@ from homeassistant.config_entries import ConfigEntryState
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_server_identity import advertisement
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN
 
 DISCOVERED = "http://192.0.2.1:81"
 
@@ -28,7 +28,7 @@ def offline(client_cls, *urls):
 @pytest.fixture
 def api():
     """Answer every origin as the same server with one known robot."""
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as client:
+    with patch("custom_components.vacuula_client.config_flow.VacuulaClient") as client:
         client.return_value.async_server_info = AsyncMock(return_value={})
         client.return_value.async_robots = AsyncMock(return_value={"R1": {}})
         yield client
@@ -146,6 +146,8 @@ async def test_slow_configured_address_follows_discovery(hass, api, reload):
         slow if url == "http://old.local:81" else working
     )
     entry = loaded_entry(hass, "http://old.local:81")
-    with patch("custom_components.vacuula.config_flow.CURRENT_URL_CHECK_TIMEOUT", 0.01):
+    with patch(
+        "custom_components.vacuula_client.config_flow.CURRENT_URL_CHECK_TIMEOUT", 0.01
+    ):
         await rediscover(hass)
     assert entry.data["url"] == DISCOVERED

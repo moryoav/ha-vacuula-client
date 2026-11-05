@@ -3,7 +3,7 @@
 import pytest
 from test_client import make_client
 
-from custom_components.vacuula.client import VacuulaError
+from custom_components.vacuula_client.client import VacuulaError
 
 
 @pytest.mark.parametrize("number", [b"1e999", b"-1e999"])

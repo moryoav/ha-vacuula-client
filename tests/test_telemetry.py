@@ -6,12 +6,14 @@ import pytest
 from homeassistant.const import EntityCategory
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.binary_sensor import create_entities as binary_entities
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.sensor import create_entities as sensor_entities
-from custom_components.vacuula.telemetry import (
+from custom_components.vacuula_client.binary_sensor import (
+    create_entities as binary_entities,
+)
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.sensor import create_entities as sensor_entities
+from custom_components.vacuula_client.telemetry import (
     key_and_label,
     latest_record,
     scalars,

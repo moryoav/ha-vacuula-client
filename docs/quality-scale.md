@@ -8,7 +8,7 @@ suite alone does not establish an official rating.
 This assessment follows the current
 [Home Assistant quality scale](https://contributors.home-assistant.io/core/quality-scale/),
 reviewed on 2026-10-19. The adjacent
-[`quality_scale.yaml`](../custom_components/vacuula/quality_scale.yaml) lists all
+[`quality_scale.yaml`](../custom_components/vacuula_client/quality_scale.yaml) lists all
 54 rules. `done` records inspected local implementation evidence, `todo` records
 unfinished work or missing verification, and `exempt` gives a specific reason.
 These statuses are a development checklist, subject to independent review.

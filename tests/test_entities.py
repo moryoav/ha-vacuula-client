@@ -8,8 +8,8 @@ from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.data import RobotData
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
 
 READ_COMMANDS = {
     "getRobotState",
@@ -185,9 +185,9 @@ async def loaded(hass):
 
     client.async_command = AsyncMock(side_effect=command)
     with (
-        patch("custom_components.vacuula.VacuulaClient", return_value=client),
+        patch("custom_components.vacuula_client.VacuulaClient", return_value=client),
         patch(
-            "custom_components.vacuula.coordinator.VacuulaCoordinator.async_start",
+            "custom_components.vacuula_client.coordinator.VacuulaCoordinator.async_start",
             new=AsyncMock(),
         ),
     ):

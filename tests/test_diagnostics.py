@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.diagnostics import (
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.diagnostics import (
     _snapshot,
     async_get_config_entry_diagnostics,
 )

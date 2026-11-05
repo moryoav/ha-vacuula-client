@@ -14,10 +14,10 @@ from test_integration import entity_id, loaded  # noqa: F401
 from test_review_fixes import unit_coordinator
 from test_schedule_merge import call, schedule_setup  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.coordinator import FOLLOW_UP_DELAY
-from custom_components.vacuula.switch import VacuulaScheduleEventSwitch
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.coordinator import FOLLOW_UP_DELAY
+from custom_components.vacuula_client.switch import VacuulaScheduleEventSwitch
 
 SERIAL = "TEST-robot"
 
@@ -65,7 +65,8 @@ async def test_d5_sent_home_reports_returning_for_the_whole_trip(hass, loaded): 
 
     unsubscribe = hass.bus.async_listen(EVENT_STATE_CHANGED, record)
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         await hass.services.async_call(
             "vacuum", "return_to_base", {"entity_id": vacuum}, blocking=True
@@ -116,7 +117,7 @@ async def test_failed_home_command_does_not_mark_a_trip(hass, loaded):  # noqa: 
     server.client.async_command.side_effect = command
     with (
         patch(
-            "custom_components.vacuula.coordinator.asyncio.sleep",
+            "custom_components.vacuula_client.coordinator.asyncio.sleep",
             new_callable=AsyncMock,
         ),
         pytest.raises(HomeAssistantError),
@@ -151,7 +152,8 @@ async def test_gen4_return_is_not_tracked(hass, loaded):  # noqa: F811
         "vacuum", "start", {"entity_id": vacuum}, blocking=True
     )
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         await hass.services.async_call(
             "vacuum", "return_to_base", {"entity_id": vacuum}, blocking=True
@@ -353,7 +355,7 @@ async def test_other_refusals_are_not_rechecked(hass):
     def build(robot):
         """Refuse like a mapped start without a usable map."""
         raise ServiceValidationError(
-            translation_domain="vacuula", translation_key="map_unavailable"
+            translation_domain="vacuula_client", translation_key="map_unavailable"
         )
 
     with pytest.raises(ServiceValidationError) as error:

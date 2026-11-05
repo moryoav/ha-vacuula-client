@@ -7,9 +7,9 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from test_integration import entity_id, loaded  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import GEN3
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import GEN3
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 SERIAL = "TEST-robot"
 
@@ -214,7 +214,8 @@ async def test_delayed_home_motion_after_paused_readback_is_returning(hass, load
 
     server.client.async_command.side_effect = command
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         await coordinator.async_return_to_base(SERIAL)
     coordinator._handle_event(

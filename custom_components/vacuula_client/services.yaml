@@ -4,7 +4,7 @@ clean:
       required: true
       selector:
         device:
-          integration: vacuula
+          integration: vacuula_client
     map_id: &map
       selector:
         text:

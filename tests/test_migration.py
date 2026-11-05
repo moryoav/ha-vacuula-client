@@ -5,8 +5,8 @@ from copy import deepcopy
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula import async_migrate_entry
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client import async_migrate_entry
+from custom_components.vacuula_client.const import DOMAIN
 
 
 async def test_old_house_default_becomes_automatic_and_keeps_other_preferences(hass):

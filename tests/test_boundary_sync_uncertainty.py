@@ -7,11 +7,11 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.client import CannotConnect, MapRequestRejected
-from custom_components.vacuula.const import DOMAIN, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.vacuum import start_payload
+from custom_components.vacuula_client.client import CannotConnect, MapRequestRejected
+from custom_components.vacuula_client.const import DOMAIN, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.vacuum import start_payload
 
 BOUNDARIES = [
     {

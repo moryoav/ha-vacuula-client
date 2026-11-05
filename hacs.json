@@ -3,5 +3,5 @@
   "homeassistant": "2026.10.2",
   "hide_default_branch": true,
   "zip_release": true,
-  "filename": "vacuula.zip"
+  "filename": "vacuula_client.zip"
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Breaking: Renamed the Home Assistant integration domain and component folder from `vacuula` to `vacuula_client` to avoid overwriting another integration already listed in HACS. Existing users must remove this repository's old entry, update, restart Home Assistant and set up Vacuula Client again. Home Assistant settings and recovery guards do not migrate; resolve pending floorplan repairs before removing the old entry.
+- Breaking: Renamed actions from `vacuula.*` to `vacuula_client.*`. Updated action selectors, translations, branding paths, setup links and examples. Automations and dashboards need the new device and entity references after setup. Robots, maps and schedules stored on the Vacuula server are preserved.
+- Renamed the HACS release asset to `vacuula_client.zip` and updated manual installation instructions, validation and release tooling for the new domain.
+
 ## 0.1.18
 
 - Fixed blocking timezone loads in the Generation 3 schedule action. Reused Home Assistant's cached local timezone and resolved the server timezone asynchronously before converting schedule times.

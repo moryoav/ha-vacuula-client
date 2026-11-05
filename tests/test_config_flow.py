@@ -7,9 +7,9 @@ from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.config_flow import normalize_url
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.config_flow import normalize_url
+from custom_components.vacuula_client.const import DOMAIN
 
 
 @pytest.mark.parametrize(
@@ -47,7 +47,7 @@ def test_normalize(value, expected):
 def no_discovery():
     """Force manual setup by returning no mDNS server candidates."""
     with patch(
-        "custom_components.vacuula.config_flow.async_discover_servers",
+        "custom_components.vacuula_client.config_flow.async_discover_servers",
         new=AsyncMock(return_value=[]),
     ):
         yield
@@ -56,7 +56,7 @@ def no_discovery():
 @pytest.fixture
 def client():
     """Mock a reachable server with one known robot for configuration flows."""
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as cls:
+    with patch("custom_components.vacuula_client.config_flow.VacuulaClient") as cls:
         instance = cls.return_value
         instance.async_server_info = AsyncMock(return_value={"version": "1.0.0"})
         instance.async_robots = AsyncMock(return_value={"TEST-robot": {}})
@@ -69,7 +69,7 @@ async def test_user(hass, client, no_discovery):
         DOMAIN, context={"source": "user"}
     )
     assert result["type"] == FlowResultType.FORM
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": "http://test.local:81/"}
         )
@@ -80,6 +80,37 @@ async def test_user(hass, client, no_discovery):
         "url": "http://test.local:81",
         "robot_ids": ["TEST-robot"],
     }
+
+
+async def test_setup_keeps_an_existing_vacuula_entry_separate(
+    hass, client, no_discovery
+):
+    """Configure the new domain without changing an entry owned by the old domain."""
+    old_data = {"url": "http://test.local:81", "robot_ids": ["TEST-robot"]}
+    old_options = {"cleaning_options": {"TEST-robot": {"mode": "turbo"}}}
+    old_entry = MockConfigEntry(
+        domain="vacuula",
+        title="Existing Vacuula",
+        unique_id="http://test.local:81",
+        data=old_data,
+        options=old_options,
+    )
+    old_entry.add_to_hass(hass)
+    result = await hass.config_entries.flow.async_init(
+        "vacuula_client", context={"source": "user"}
+    )
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {"url": "http://test.local:81"}
+        )
+        await hass.async_block_till_done()
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["result"].domain == "vacuula_client"
+    assert result["result"].data == old_data
+    assert hass.config_entries.async_entries("vacuula") == [old_entry]
+    assert old_entry.title == "Existing Vacuula"
+    assert old_entry.data == old_data
+    assert old_entry.options == old_options
 
 
 async def test_user_errors(hass, client, no_discovery):
@@ -134,7 +165,7 @@ async def test_zeroconf(hass, client):
         DOMAIN, context={"source": "zeroconf"}, data=discovery()
     )
     assert result["step_id"] == "confirm"
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY

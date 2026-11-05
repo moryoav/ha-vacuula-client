@@ -10,11 +10,11 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import device_registry as dr
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.services import async_setup_services
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.services import async_setup_services
 
 
 @pytest.fixture

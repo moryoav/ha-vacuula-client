@@ -9,7 +9,7 @@ import pytest
 from zeroconf import BadTypeInNameException, NotRunningException, ServiceStateChange
 from zeroconf.asyncio import AsyncServiceInfo
 
-from custom_components.vacuula import discovery
+from custom_components.vacuula_client import discovery
 
 
 def service(name="Office", host="192.0.2.2", protocol="http"):

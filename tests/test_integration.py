@@ -10,8 +10,8 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.client import VacuulaClient
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4, PLATFORMS
+from custom_components.vacuula_client.client import VacuulaClient
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4, PLATFORMS
 
 
 class LocalServer:
@@ -237,9 +237,11 @@ async def loaded(hass, request):
     )
     entry.add_to_hass(hass)
     with (
-        patch("custom_components.vacuula.VacuulaClient", return_value=server.client),
         patch(
-            "custom_components.vacuula.coordinator.VacuulaCoordinator.async_start",
+            "custom_components.vacuula_client.VacuulaClient", return_value=server.client
+        ),
+        patch(
+            "custom_components.vacuula_client.coordinator.VacuulaCoordinator.async_start",
             new=AsyncMock(),
         ),
     ):
@@ -298,7 +300,9 @@ async def test_every_platform_loads_translated_entities_and_device(
         record
         for record in caplog.get_records("setup") + caplog.records
         if record.levelno >= 30
-        and record.name.startswith(("homeassistant.", "custom_components.vacuula"))
+        and record.name.startswith(
+            ("homeassistant.", "custom_components.vacuula_client")
+        )
         and "custom integration" not in record.message
     ]
     assert server.client.async_command.await_count >= 5

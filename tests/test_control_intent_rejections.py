@@ -10,10 +10,10 @@ from homeassistant.exceptions import HomeAssistantError
 from test_integration import entity_id
 from test_integration import loaded as integration_loaded
 
-from custom_components.vacuula.client import CannotConnect, CommandError
-from custom_components.vacuula.const import GEN3
-from custom_components.vacuula.data import begin_return_trip, track_return_trip
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.client import CannotConnect, CommandError
+from custom_components.vacuula_client.const import GEN3
+from custom_components.vacuula_client.data import begin_return_trip, track_return_trip
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 SERIAL = "TEST-robot"
 loaded = integration_loaded

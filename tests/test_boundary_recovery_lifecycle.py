@@ -10,9 +10,9 @@ from test_boundary_sync_uncertainty import (
     uncertain_boundary_setup,  # noqa: F401
 )
 
-from custom_components.vacuula.client import CannotConnect, MapRequestRejected
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.vacuum import start_payload
+from custom_components.vacuula_client.client import CannotConnect, MapRequestRejected
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.vacuum import start_payload
 
 
 @pytest.mark.parametrize("cancelled", [False, True])

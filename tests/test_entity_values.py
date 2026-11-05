@@ -8,38 +8,38 @@ import pytest
 from homeassistant.exceptions import ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.binary_sensor import (
+from custom_components.vacuula_client.binary_sensor import (
     DESCRIPTIONS as BINARY_DESCRIPTIONS,
 )
-from custom_components.vacuula.binary_sensor import (
+from custom_components.vacuula_client.binary_sensor import (
     binary_value,
 )
-from custom_components.vacuula.binary_sensor import (
+from custom_components.vacuula_client.binary_sensor import (
     create_entities as binary_entities,
 )
-from custom_components.vacuula.button import (
+from custom_components.vacuula_client.button import (
     create_entities as button_entities,
 )
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.entity import number, value_at
-from custom_components.vacuula.number import (
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.entity import number, value_at
+from custom_components.vacuula_client.number import (
     DESCRIPTIONS as NUMBER_DESCRIPTIONS,
 )
-from custom_components.vacuula.number import (
+from custom_components.vacuula_client.number import (
     VacuulaNumber,
 )
-from custom_components.vacuula.number import (
+from custom_components.vacuula_client.number import (
     create_entities as number_entities,
 )
-from custom_components.vacuula.select import (
+from custom_components.vacuula_client.select import (
     VacuulaSelect,
 )
-from custom_components.vacuula.select import (
+from custom_components.vacuula_client.select import (
     create_entities as select_entities,
 )
-from custom_components.vacuula.sensor import (
+from custom_components.vacuula_client.sensor import (
     DESCRIPTIONS,
     VacuulaSensor,
     last_value,
@@ -48,19 +48,19 @@ from custom_components.vacuula.sensor import (
     scalar_stats,
     sensor_value,
 )
-from custom_components.vacuula.sensor import (
+from custom_components.vacuula_client.sensor import (
     create_entities as sensor_entities,
 )
-from custom_components.vacuula.switch import (
+from custom_components.vacuula_client.switch import (
     VacuulaMapSwitch,
     VacuulaScheduleEventSwitch,
     VacuulaSwitch,
     switch_value,
 )
-from custom_components.vacuula.switch import (
+from custom_components.vacuula_client.switch import (
     create_entities as switch_entities,
 )
-from custom_components.vacuula.vacuum import (
+from custom_components.vacuula_client.vacuum import (
     VacuulaVacuum,
     cleaning_mode,
     fan_modes,

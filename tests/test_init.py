@@ -6,20 +6,21 @@ import pytest
 from homeassistant.exceptions import ConfigEntryNotReady
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula import (
+from custom_components.vacuula_client import (
     async_remove_config_entry_device,
     async_setup,
     async_setup_entry,
     async_unload_entry,
 )
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN
 
 
 async def test_setup(hass):
     """Register the integration's services during domain setup."""
     assert await async_setup(hass, {})
     assert hass.services.has_service(DOMAIN, "clean")
+    assert not hass.services.has_service("vacuula", "clean")
 
 
 async def test_entry_lifecycle(hass):
@@ -31,7 +32,10 @@ async def test_entry_lifecycle(hass):
     coordinator.async_start = AsyncMock()
     coordinator.async_stop = AsyncMock()
     with (
-        patch("custom_components.vacuula.VacuulaCoordinator", return_value=coordinator),
+        patch(
+            "custom_components.vacuula_client.VacuulaCoordinator",
+            return_value=coordinator,
+        ),
         patch.object(
             hass.config_entries, "async_forward_entry_setups", new=AsyncMock()
         ),
@@ -58,7 +62,7 @@ async def test_first_refresh_error(hass):
     """Leave an unreachable entry retryable when its initial refresh fails."""
     entry = MockConfigEntry(domain=DOMAIN, data={"url": "http://test.local:81"})
     entry.add_to_hass(hass)
-    with patch("custom_components.vacuula.VacuulaCoordinator") as cls:
+    with patch("custom_components.vacuula_client.VacuulaCoordinator") as cls:
         cls.return_value.async_config_entry_first_refresh = AsyncMock(
             side_effect=ConfigEntryNotReady("offline")
         )
@@ -71,7 +75,7 @@ async def test_remove_device_when_runtime_not_loaded(hass):
     entry = MockConfigEntry(domain=DOMAIN, data={"url": "http://test.local:81"})
     entry.add_to_hass(hass)
     device = MagicMock(identifiers={(DOMAIN, "old_robot")})
-    with patch("custom_components.vacuula.VacuulaClient") as cls:
+    with patch("custom_components.vacuula_client.VacuulaClient") as cls:
         cls.return_value.async_robots = AsyncMock(return_value={})
         assert await async_remove_config_entry_device(hass, entry, device)
         cls.return_value.async_robots.side_effect = CannotConnect("offline")

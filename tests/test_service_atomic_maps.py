@@ -10,8 +10,8 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError
 from test_schedule_merge import schedule_setup  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN
 
 
 @pytest.mark.parametrize("action", ["clean", "new_event", "update_event"])

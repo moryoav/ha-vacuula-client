@@ -64,7 +64,7 @@
       "message": "The robot has not found its base during this run, so it cannot return to it. A clean in progress is left paused. Let it clean until it passes its base, or carry it back."
     },
     "event_not_found": {
-      "message": "No schedule event on the robot has this ID, or the ID is not unique. Read the current IDs with vacuula.get_data (resource: schedule)."
+      "message": "No schedule event on the robot has this ID, or the ID is not unique. Read the current IDs with vacuula_client.get_data (resource: schedule)."
     },
     "house_with_map": {
       "message": "Whole-home cleaning cannot be combined with a map ID or zone IDs."
@@ -151,7 +151,7 @@
   "issues": {
     "map_promotion_required": {
       "title": "Floorplan upload not confirmed for {robot}",
-      "description": "The last floorplan or boundary change for {robot} (map `{map_id}`) was not confirmed. The robot may still use old zones or have no active floorplan.\n\nIf an HTTP request was interrupted, Vacuula may still be processing it. Further map changes stay blocked until the Vacuula server restarts. Restarting Home Assistant alone does not stop those handlers. The integration detects a changed Vacuula process when possible. If its identity is unavailable, use `confirm_server_restarted: true` only after actually restarting Vacuula.\n\nThen run `vacuula.map_action` with this map ID and `action: promote` to confirm the upload, or `action: demote` to continue without the floorplan. A recognized completed Vacuula error does not require the extra restart. After a boundary edit, an unchanged promoted flag alone does not confirm the edited zones reached the robot.\n\nAutomatic and mapped starts and mapped schedule changes from Home Assistant remain blocked until recovery is confirmed. Explicit whole-home cleaning remains available, and mapped events can still be turned off. Existing schedules and controls outside Home Assistant are not blocked. Robot commands are never retried automatically."
+      "description": "The last floorplan or boundary change for {robot} (map `{map_id}`) was not confirmed. The robot may still use old zones or have no active floorplan.\n\nIf an HTTP request was interrupted, Vacuula may still be processing it. Further map changes stay blocked until the Vacuula server restarts. Restarting Home Assistant alone does not stop those handlers. The integration detects a changed Vacuula process when possible. If its identity is unavailable, use `confirm_server_restarted: true` only after actually restarting Vacuula.\n\nThen run `vacuula_client.map_action` with this map ID and `action: promote` to confirm the upload, or `action: demote` to continue without the floorplan. A recognized completed Vacuula error does not require the extra restart. After a boundary edit, an unchanged promoted flag alone does not confirm the edited zones reached the robot.\n\nAutomatic and mapped starts and mapped schedule changes from Home Assistant remain blocked until recovery is confirmed. Explicit whole-home cleaning remains available, and mapped events can still be turned off. Existing schedules and controls outside Home Assistant are not blocked. Robot commands are never retried automatically."
     }
   },
   "entity": {

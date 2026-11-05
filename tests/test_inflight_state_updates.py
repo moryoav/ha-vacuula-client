@@ -7,9 +7,9 @@ import pytest
 from homeassistant.exceptions import ServiceValidationError
 from test_integration import loaded  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 
 def state_event(generation, state):

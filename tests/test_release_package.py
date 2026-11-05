@@ -13,11 +13,11 @@ from tools import build_hacs_release as release
 def tagged_repo(tmp_path, monkeypatch):
     """Create a small tagged repository separate from the real checkout."""
     root = tmp_path / "source"
-    component = root / "custom_components" / "vacuula"
+    component = root / "custom_components" / "vacuula_client"
     component.mkdir(parents=True)
     (component / "__init__.py").write_text('"""Fixture integration."""\n')
     (component / "manifest.json").write_text(
-        json.dumps({"domain": "vacuula", "version": "0.1.14"})
+        json.dumps({"domain": "vacuula_client", "version": "0.1.14"})
     )
     (component / "brand").mkdir()
     (component / "brand" / "NOTICE.txt").write_text("Artwork attribution\n")
@@ -40,12 +40,13 @@ def tagged_repo(tmp_path, monkeypatch):
 
 def test_package_uses_the_tag_and_preserves_licenses(tagged_repo, tmp_path):
     """Ignore working changes and caches while shipping flat files and notices."""
-    component = tagged_repo / "custom_components" / "vacuula"
+    component = tagged_repo / "custom_components" / "vacuula_client"
     (component / "manifest.json").write_text('{"version": "unreleased"}')
     (component / "private.private.txt").write_text("Untracked private fixture")
     (component / "__pycache__").mkdir()
     (component / "__pycache__" / "cache.pyc").write_bytes(b"untracked")
     asset = release.build("v0.1.14", tmp_path / "output")
+    assert asset.name == "vacuula_client.zip"
     with zipfile.ZipFile(asset) as archive:
         assert set(archive.namelist()) == {
             "__init__.py",
@@ -54,6 +55,7 @@ def test_package_uses_the_tag_and_preserves_licenses(tagged_repo, tmp_path):
             "brand/LICENSE-AGPL-3.0.txt",
         }
         assert json.loads(archive.read("manifest.json"))["version"] == "0.1.14"
+        assert json.loads(archive.read("manifest.json"))["domain"] == "vacuula_client"
         assert archive.read("brand/NOTICE.txt") == b"Artwork attribution\n"
         assert archive.testzip() is None
     assert (asset.parent / "release-notes.md").read_text() == "- Fixed schedules.\n"

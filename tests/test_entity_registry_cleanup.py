@@ -8,11 +8,11 @@ from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_integration import entity_id, loaded  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.image import async_setup_entry as setup_images
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.image import async_setup_entry as setup_images
 
 
 @pytest.mark.parametrize("loaded", [GEN3], indirect=True)

@@ -5,7 +5,7 @@ pythonpath = ["."]
 
 [tool.coverage.run]
 branch = true
-source = ["custom_components/vacuula"]
+source = ["custom_components/vacuula_client"]
 
 [tool.coverage.report]
 show_missing = true
@@ -20,13 +20,13 @@ select = ["E", "F", "I", "UP", "B", "ASYNC"]
 ignore = ["ASYNC109"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["custom_components.vacuula"]
+known-first-party = ["custom_components.vacuula_client"]
 
 [tool.mypy]
 python_version = "3.14"
 strict = true
 explicit_package_bases = true
-files = ["custom_components/vacuula"]
+files = ["custom_components/vacuula_client"]
 
 [[tool.mypy.overrides]]
 module = ["homeassistant.*"]

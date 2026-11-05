@@ -8,8 +8,8 @@ from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_discovery_address import offline
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN
 
 
 def advertised_server(address="192.0.2.1", port=8099, name="Vacuula Server"):
@@ -29,7 +29,7 @@ def advertised_server(address="192.0.2.1", port=8099, name="Vacuula Server"):
 def search():
     """Replace LAN discovery with an empty, configurable asynchronous search."""
     with patch(
-        "custom_components.vacuula.config_flow.async_discover_servers",
+        "custom_components.vacuula_client.config_flow.async_discover_servers",
         new_callable=AsyncMock,
         return_value=[],
     ) as discover:
@@ -39,7 +39,7 @@ def search():
 @pytest.fixture
 def api():
     """Mock a reachable server exposing one newly discovered robot."""
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as client:
+    with patch("custom_components.vacuula_client.config_flow.VacuulaClient") as client:
         client.return_value.async_server_info = AsyncMock(
             return_value={"version": "1.0.0"}
         )
@@ -69,7 +69,7 @@ async def start_discovered(hass):
 
 async def finish_setup(hass, result):
     """Confirm a pending flow while bypassing integration loading."""
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     return result
@@ -151,7 +151,7 @@ async def test_only_configured_server_allows_adding_another_server(hass, search,
     assert result["step_id"] == "user"
     api.assert_not_called()
 
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": "http://192.0.2.2:81"}
         )
@@ -186,7 +186,7 @@ async def test_unreachable_advertisement_allows_a_working_address(
     assert url_key.default() == "http://192.0.2.1:8099"
 
     api.return_value.async_server_info.side_effect = None
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": "http://192.0.2.3:81"}
         )
@@ -243,7 +243,7 @@ async def test_discovered_robot_identity_duplicate_offers_another_address(
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
 
     api.return_value.async_robots.return_value = {"OTHER-robot": {}}
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": "http://192.0.2.4:81"}
         )
@@ -294,7 +294,7 @@ async def test_confirmation_connection_failure_allows_address_retry(
 
     api.return_value.async_server_info.side_effect = None
     base_url = "http://192.0.2.1:8099" if same_url else "http://192.0.2.3:81"
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": base_url}
         )
@@ -379,7 +379,7 @@ async def test_discovered_servers_still_allow_a_manual_address(
     )
     api.assert_not_called()
 
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"url": "https://vacuula.example.org"}
         )

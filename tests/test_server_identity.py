@@ -9,8 +9,11 @@ from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.config_flow import discovery_aliases, entry_aliases
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.config_flow import (
+    discovery_aliases,
+    entry_aliases,
+)
+from custom_components.vacuula_client.const import DOMAIN
 
 
 def advertisement(address="192.0.2.1", port=81, protocol="http"):
@@ -29,7 +32,7 @@ def advertisement(address="192.0.2.1", port=81, protocol="http"):
 @pytest.fixture
 def api():
     """Mock a reachable empty server for endpoint-identity setup tests."""
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as client:
+    with patch("custom_components.vacuula_client.config_flow.VacuulaClient") as client:
         client.return_value.async_server_info = AsyncMock(
             return_value={"version": "1.0.0", "timezone": "Asia/Jerusalem"}
         )
@@ -41,7 +44,7 @@ def api():
 def resolver():
     """Resolve test hostnames to the shared IPv4 endpoint without querying DNS."""
     with patch(
-        "custom_components.vacuula.config_flow."
+        "custom_components.vacuula_client.config_flow."
         "HomeAssistantTCPConnector.async_resolve_host",
         new_callable=AsyncMock,
         return_value=[{"host": "192.0.2.1"}],
@@ -87,7 +90,7 @@ async def test_manual_search_skips_configured_empty_hostname_and_offers_address(
         domain=DOMAIN, data={"url": "http://vacuula.local:81", "robot_ids": []}
     ).add_to_hass(hass)
     with patch(
-        "custom_components.vacuula.config_flow.async_discover_servers",
+        "custom_components.vacuula_client.config_flow.async_discover_servers",
         new=AsyncMock(return_value=[advertisement()]),
     ):
         result = await hass.config_entries.flow.async_init(
@@ -107,7 +110,7 @@ async def test_conflicting_advertised_hostname_does_not_hide_a_second_server(
         domain=DOMAIN, data={"url": "http://vacuula.local:81", "robot_ids": []}
     ).add_to_hass(hass)
     with patch(
-        "custom_components.vacuula.config_flow.async_discover_servers",
+        "custom_components.vacuula_client.config_flow.async_discover_servers",
         new=AsyncMock(return_value=[advertisement(), advertisement("192.0.2.2")]),
     ):
         result = await hass.config_entries.flow.async_init(
@@ -130,7 +133,7 @@ async def test_discovered_empty_entry_remembers_hostname_for_manual_setup(
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": "zeroconf"}, data=advertisement()
     )
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY
@@ -174,7 +177,7 @@ async def test_distinct_empty_endpoints_are_not_merged(
         data=advertisement(address, port, protocol),
     )
     assert result["step_id"] == "confirm"
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY
@@ -243,7 +246,9 @@ async def test_unverified_hostname_does_not_merge_empty_servers(
             await asyncio.Event().wait()
 
         resolver.side_effect = never_resolves
-    with patch("custom_components.vacuula.config_flow.IDENTITY_RESOLVE_TIMEOUT", 0.001):
+    with patch(
+        "custom_components.vacuula_client.config_flow.IDENTITY_RESOLVE_TIMEOUT", 0.001
+    ):
         result = await hass.config_entries.flow.async_init(
             DOMAIN, context={"source": "zeroconf"}, data=advertisement()
         )
@@ -261,7 +266,7 @@ async def test_nonstandard_shared_connector_cannot_establish_dns_identity(
     entry.add_to_hass(hass)
     original_data = dict(entry.data)
     with patch(
-        "custom_components.vacuula.config_flow.async_get_clientsession",
+        "custom_components.vacuula_client.config_flow.async_get_clientsession",
         return_value=SimpleNamespace(connector=object()),
     ):
         result = await hass.config_entries.flow.async_init(
@@ -291,7 +296,7 @@ async def test_malformed_legacy_url_does_not_hide_a_different_valid_endpoint(
         DOMAIN, context={"source": "zeroconf"}, data=advertisement()
     )
     assert result["step_id"] == "confirm"
-    with patch("custom_components.vacuula.async_setup_entry", return_value=True):
+    with patch("custom_components.vacuula_client.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
         await hass.async_block_till_done()
     assert result["type"] == FlowResultType.CREATE_ENTRY

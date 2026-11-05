@@ -3,7 +3,7 @@
 **I maintain this independent, fan-made repository. It is not affiliated with the Vacuula team and has not been reviewed, checked, or endorsed by them.**
 
 <p align="center">
-  <img src="custom_components/vacuula/brand/icon@2x.png" alt="Vacuula vampire robot" width="128" height="128">
+  <img src="custom_components/vacuula_client/brand/icon@2x.png" alt="Vacuula vampire robot" width="128" height="128">
 </p>
 
 [![HACS custom repository](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=flat-square)](#installation)
@@ -25,6 +25,33 @@ robot credentials, or cloud connection.
   installation method. Manual installation is also available below.
 
 ## Installation
+
+### Breaking change in v0.2.0: set up the integration again
+
+I changed the integration domain from `vacuula` to `vacuula_client` because
+another integration already uses `vacuula` in HACS. Home Assistant treats this
+as a different integration, so existing entries and settings do not migrate
+automatically.
+
+If you installed v0.1.18 or earlier from this repository:
+
+1. Back up Home Assistant and note your server URL, Home Assistant cleaning
+   defaults, custom entity names and affected automations. Resolve any
+   **Floorplan upload not confirmed** repairs before removing the old entry;
+   its recovery guards are not transferred to the new entry.
+2. Remove this repository's old **Vacuula Client** entry from **Settings >
+   Devices & services** before updating.
+3. Install v0.2.0 or newer through HACS, or use the new manual installation
+   folder below. If this repository's old `/config/custom_components/vacuula`
+   folder remains, remove it before restarting Home Assistant. Only remove
+   that folder if it belongs to this repository.
+4. Restart Home Assistant and add **Vacuula Client** again with the same server
+   URL. Restore your Home Assistant cleaning defaults and custom names.
+5. Update scripts and automations from `vacuula.*` to `vacuula_client.*`, for
+   example `vacuula_client.clean`. Select the new devices and check entity
+   references in automations and dashboards; IDs may change during setup.
+
+Robots, maps and schedules stored on the Vacuula server are preserved.
 
 ### 1. Install the integration
 
@@ -55,25 +82,25 @@ If you prefer to add the custom repository manually:
 
 #### Manual installation (alternative)
 
-Download **vacuula.zip** from the [latest release](https://github.com/moryoav/ha-vacuula-client/releases/latest)
+Download **vacuula_client.zip** from the [latest release](https://github.com/moryoav/ha-vacuula-client/releases/latest)
 and extract its contents into:
 
 ```text
-/config/custom_components/vacuula
+/config/custom_components/vacuula_client
 ```
 
 The extracted `manifest.json` must be directly inside that folder. For a source
-installation, copy the repository's `custom_components/vacuula` folder to:
+installation, copy the repository's `custom_components/vacuula_client` folder to:
 
 ```text
-/config/custom_components/vacuula
+/config/custom_components/vacuula_client
 ```
 
 Then restart Home Assistant and continue with setup below.
 
 ### 2. Add the integration
 
-[![Add the Vacuula Client integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vacuula)
+[![Add the Vacuula Client integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vacuula_client)
 
 Use the button above after Home Assistant restarts. It opens the **Vacuula Client**
 setup flow, which searches for local servers automatically.
@@ -150,7 +177,7 @@ not start a run when changed.
 
 New runs default to **Automatic (use saved map)**. Before starting, the
 integration reads fresh state and the current saved-map list, including for
-`vacuula.clean`. While docked, Generation 3 uses
+`vacuula_client.clean`. While docked, Generation 3 uses
 the robot's dock matching against enabled maps; Generation 4 uses the single
 promoted floorplan with no-go areas enabled. When no map is enabled/promoted,
 or the robot is off its dock, Automatic starts whole-home cleaning, matching
@@ -233,25 +260,25 @@ these entities. This integration provides no custom triggers or conditions.
 
 ## Actions
 
-All ten `vacuula` actions take the robot's Home Assistant `device_id` in `data`.
+All ten `vacuula_client` actions take the robot's Home Assistant `device_id` in `data`.
 They do not accept a robot serial or arbitrary protocol commands. IDs such as
-`map_id`, zone IDs, and event IDs come from `vacuula.get_data` responses.
+`map_id`, zone IDs, and event IDs come from `vacuula_client.get_data` responses.
 These advanced actions require an administrator when called by a signed-in
 user. Home Assistant automations and scripts can call them with their managed
 context. Standard vacuum entity controls use the usual entity permissions.
 
 | Action | Fields besides `device_id` | Generation and behavior |
 | --- | --- | --- |
-| `vacuula.clean` | Optional `map_id`, `cleaning_type`, `zone_ids`, `mode`, `navigation`, `nogo_enabled` | Both. Starts cleaning, automatically using saved maps by default; zones require a map. Generation 3 accepts at most one zone. |
-| `vacuula.set_schedule` | Required `events`; optional `time_basis` | Generation 3. Replaces every schedule event; `[]` clears them. Times default to Home Assistant local time. Does not enable the schedule. |
-| `vacuula.update_schedule_event` | New event: required `enabled`, `days`, `time`. Existing event: `event_id` plus fields to change. | Generation 4. Adds an event or merges changes into a freshly read existing event. Omitted settings and zones are preserved. |
-| `vacuula.delete_schedule_event` | Required `event_id` | Generation 4. Deletes one event. |
-| `vacuula.set_boundaries` | Required `map_id`, `boundaries` | Both. Replaces the complete boundary list; `[]` removes all boundaries. Generation 4 re-promotes an active map after saving so the robot receives the new zones. Inactive maps stay inactive. Read and preserve existing boundaries first. |
-| `vacuula.rename_robot` | Required `name` | Both. Changes the name stored by Vacuula. |
-| `vacuula.update_map` | Required `map_id`, `name`, `enabled` | Both. Changes the map name; `enabled` applies to Generation 3 maps. |
-| `vacuula.map_action` | Required `map_id`, `action` | Generation 4. `promote`, `use`, `unuse`, or `demote`; demotion removes active floorplan status. As in the Vacuula app, only a floorplan marked with `use` can be promoted, and the active floorplan must be demoted before `unuse`. |
-| `vacuula.get_data` | Required `resource`; conditional `map_id` or `run_id` | Both. Returns `data` and requires a response variable. See resources below. |
-| `vacuula.factory_reset` | Required `confirm: true` | Generation 4 only. Erases robot settings and may require provisioning again. `false` is rejected. |
+| `vacuula_client.clean` | Optional `map_id`, `cleaning_type`, `zone_ids`, `mode`, `navigation`, `nogo_enabled` | Both. Starts cleaning, automatically using saved maps by default; zones require a map. Generation 3 accepts at most one zone. |
+| `vacuula_client.set_schedule` | Required `events`; optional `time_basis` | Generation 3. Replaces every schedule event; `[]` clears them. Times default to Home Assistant local time. Does not enable the schedule. |
+| `vacuula_client.update_schedule_event` | New event: required `enabled`, `days`, `time`. Existing event: `event_id` plus fields to change. | Generation 4. Adds an event or merges changes into a freshly read existing event. Omitted settings and zones are preserved. |
+| `vacuula_client.delete_schedule_event` | Required `event_id` | Generation 4. Deletes one event. |
+| `vacuula_client.set_boundaries` | Required `map_id`, `boundaries` | Both. Replaces the complete boundary list; `[]` removes all boundaries. Generation 4 re-promotes an active map after saving so the robot receives the new zones. Inactive maps stay inactive. Read and preserve existing boundaries first. |
+| `vacuula_client.rename_robot` | Required `name` | Both. Changes the name stored by Vacuula. |
+| `vacuula_client.update_map` | Required `map_id`, `name`, `enabled` | Both. Changes the map name; `enabled` applies to Generation 3 maps. |
+| `vacuula_client.map_action` | Required `map_id`, `action` | Generation 4. `promote`, `use`, `unuse`, or `demote`; demotion removes active floorplan status. As in the Vacuula app, only a floorplan marked with `use` can be promoted, and the active floorplan must be demoted before `unuse`. |
+| `vacuula_client.get_data` | Required `resource`; conditional `map_id` or `run_id` | Both. Returns `data` and requires a response variable. See resources below. |
+| `vacuula_client.factory_reset` | Required `confirm: true` | Generation 4 only. Erases robot settings and may require provisioning again. `false` is rejected. |
 
 Cleaning fields default to `cleaning_type: auto`, `mode: eco`, `navigation: normal`, and
 `nogo_enabled: true`. Generation 3 modes are `eco` and `turbo`; navigation is
@@ -316,7 +343,7 @@ after each promotion and the event switches show the result.
 After an uncertain upload or active boundary save the integration keeps a recovery marker: a Repairs notice
 names the robot and map ID, and new Automatic or mapped starts and mapped
 schedule commands are blocked, so Automatic does not quietly clean without the
-no-go zones you just edited. Promote the map with `vacuula.map_action` to confirm
+no-go zones you just edited. Promote the map with `vacuula_client.map_action` to confirm
 that its current boundaries reached the robot. After a boundary edit, an unchanged
 promoted flag cannot confirm this: the robot may still have the old zones.
 For a request whose handler is known to have finished, an app promotion clears
@@ -324,12 +351,12 @@ this guard only if the integration observes the demotion and subsequent
 promotion; if the notice remains, use the Home Assistant action. Ordinary
 completed promotion failures clear when a floorplan is confirmed active again.
 These markers also clear when you demote the map with
-`vacuula.map_action` to continue without it, when the map is no longer in use,
+`vacuula_client.map_action` to continue without it, when the map is no longer in use,
 or when the robot is removed. Vacuula reports a failed upload and a deliberate
 demotion the same way, so a demotion made only in the Vacuula app does not
 clear it; demote with the action instead. Explicit whole-home cleaning remains
 available, and a mapped schedule event can still be turned off, with its switch
-or `vacuula.update_schedule_event`. Existing robot schedules and controls
+or `vacuula_client.update_schedule_event`. Existing robot schedules and controls
 outside this integration are not blocked. Robot commands are never retried
 automatically.
 
@@ -337,7 +364,7 @@ If a map request loses its HTTP connection or is cancelled, Vacuula can continue
 processing it. Further map writes are blocked because a late completion could
 undo them. Matching boundaries or an active-map flag cannot identify which
 request finished. Restart the **Vacuula server**, then promote or demote the map
-with `vacuula.map_action`. Restarting Home Assistant alone does not terminate
+with `vacuula_client.map_action`. Restarting Home Assistant alone does not terminate
 Vacuula's handlers. The integration detects a changed server process through
 the app's uncached web ETag. If that identity is unavailable, set
 `confirm_server_restarted: true` on the map action **only after actually restarting
@@ -370,7 +397,7 @@ Other actions optionally return the server result under `response`.
 Read map IDs before using them in an automation:
 
 ```yaml
-action: vacuula.get_data
+action: vacuula_client.get_data
 data:
   device_id: YOUR_ROBOT_DEVICE_ID
   resource: maps
@@ -380,7 +407,7 @@ response_variable: robot_maps
 Clean one named zone after replacing the IDs with values from the server:
 
 ```yaml
-action: vacuula.clean
+action: vacuula_client.clean
 data:
   device_id: YOUR_ROBOT_DEVICE_ID
   map_id: YOUR_MAP_ID
@@ -460,7 +487,7 @@ After a successful command, the integration reads state back from the robot.
   with plain HTTP.
 - **Floorplan upload not confirmed:** check **Settings > System > Repairs** for
   the robot and map ID. Promote the floorplan again in Vacuula or with
-  `vacuula.map_action`, or demote it with the action to continue without it.
+  `vacuula_client.map_action`, or demote it with the action to continue without it.
 
 Download integration diagnostics from **Settings > Devices & services** when
 investigating a fault. Diagnostics use cached data only and omit the server URL,
@@ -469,7 +496,7 @@ before sharing it. `get_data` responses are intentionally richer than diagnostic
 
 To remove the integration, delete its entry in **Settings > Devices & services**.
 To remove the custom code as well, remove **Vacuula Client** from HACS, or delete
-`/config/custom_components/vacuula` if installed manually, then restart Home
+`/config/custom_components/vacuula_client` if installed manually, then restart Home
 Assistant. Removing the integration does not delete robots,
 maps, or schedules from Vacuula. A robot no longer listed by the server can be
 removed from Home Assistant's device registry. If it registers with Vacuula
@@ -491,10 +518,10 @@ dependencies:
 
 ```sh
 python tools/check_docstrings.py
-python -m pytest --cov=custom_components.vacuula --cov-report=term-missing
+python -m pytest --cov=custom_components.vacuula_client --cov-report=term-missing
 python -m ruff check .
 python -m ruff format --check .
-python -m mypy custom_components/vacuula tools
+python -m mypy custom_components/vacuula_client tools
 ```
 
 Docstring coverage is required to stay at **100%** across integration code,
@@ -513,18 +540,21 @@ map edit, or factory reset is needed for read-only hardware validation.
 ### Release archives
 
 Stable `vX.Y.Z` tags run the Python checks and Hassfest, then publish a GitHub
-release with **vacuula.zip**. The archive contains only the tagged integration
+release with **vacuula_client.zip**. The archive contains only the tagged integration
 files at its root, including artwork sources, licenses and attribution. HACS
 uses this asset; it does not offer the default branch as an installation version.
 
-The **Release** workflow also accepts an existing tag for packaging or checking
-an earlier release. It preserves existing release notes and refuses to replace
+The **Release** workflow also accepts an existing v0.2.0 or newer tag for
+packaging or checking a release. It preserves existing release notes and refuses to replace
 an asset whose bytes differ. To build locally, choose an output directory
 outside the repository:
 
 ```sh
-python tools/build_hacs_release.py v0.1.15 /tmp/vacuula-release
+python tools/build_hacs_release.py v0.2.0 /tmp/vacuula-release
 ```
+
+For releases before v0.2.0, use the build tool from the matching tag, which
+packages the previous `vacuula` domain.
 
 ## Artwork
 

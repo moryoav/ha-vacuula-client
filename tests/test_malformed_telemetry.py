@@ -2,13 +2,13 @@
 
 import pytest
 
-from custom_components.vacuula.binary_sensor import DESCRIPTIONS as BINARY
-from custom_components.vacuula.binary_sensor import binary_value
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.sensor import DESCRIPTIONS as SENSORS
-from custom_components.vacuula.sensor import sensor_value
-from custom_components.vacuula.telemetry import source_data
+from custom_components.vacuula_client.binary_sensor import DESCRIPTIONS as BINARY
+from custom_components.vacuula_client.binary_sensor import binary_value
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.sensor import DESCRIPTIONS as SENSORS
+from custom_components.vacuula_client.sensor import sensor_value
+from custom_components.vacuula_client.telemetry import source_data
 
 
 @pytest.mark.parametrize(

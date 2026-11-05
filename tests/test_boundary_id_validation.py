@@ -8,7 +8,7 @@ import pytest
 from homeassistant.exceptions import ServiceValidationError
 from test_services import call, setup  # noqa: F401
 
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
 
 
 def boundary(identifier):

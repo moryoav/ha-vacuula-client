@@ -8,13 +8,13 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.binary_sensor import DESCRIPTIONS, binary_value
-from custom_components.vacuula.button import VacuulaButton
-from custom_components.vacuula.client import VacuulaClient, VacuulaError
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.binary_sensor import DESCRIPTIONS, binary_value
+from custom_components.vacuula_client.button import VacuulaButton
+from custom_components.vacuula_client.client import VacuulaClient, VacuulaError
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 
 def paused_d5_state():
@@ -122,7 +122,8 @@ async def test_active_cleaning_pauses_waits_confirms_then_docks(setup_robot):
     """Pause active cleaning, wait 3.5 seconds, confirm readiness and send home once."""
     coordinator, _robot, client, names = setup_robot
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ) as sleep:
         await coordinator.async_return_to_base("robot")
     sleep.assert_awaited_once_with(3.5)
@@ -145,7 +146,8 @@ async def test_pause_then_refuses_when_the_d5_has_not_seen_its_base(setup_robot)
     response = {"data": paused_d5_state()}
     client.async_command.side_effect = [state_reply(robot), {}, response]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ) as sleep:
         with pytest.raises(ServiceValidationError) as error:
             await coordinator.async_return_to_base("robot")
@@ -199,7 +201,8 @@ async def test_seen_base_does_not_override_live_d5_home_refusal(
             {"data": deepcopy(observed)},
         ]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ) as sleep:
         with pytest.raises(ServiceValidationError) as error:
             if platform == "button":
@@ -252,7 +255,8 @@ async def test_stale_flags_are_rechecked_before_refusing_home(setup_robot):
         for state in replies
     ]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         await coordinator.async_return_to_base("robot")
     assert client.async_command.await_args_list == [
@@ -284,7 +288,8 @@ async def test_direct_docking_does_not_pause_or_wait(setup_robot):
     coordinator, robot, client, names = setup_robot
     robot.state[names["commands"]].update({"pause": False, names["home_flag"]: True})
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ) as sleep:
         await coordinator.async_return_to_base("robot")
     sleep.assert_not_awaited()
@@ -316,7 +321,8 @@ async def test_pause_failure_never_sends_home(setup_robot):
         VacuulaError("pause failed"),
     ]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ) as sleep:
         with pytest.raises(HomeAssistantError) as error:
             await coordinator.async_return_to_base("robot")
@@ -334,7 +340,8 @@ async def test_fresh_state_still_refuses_docking(setup_robot):
     state[names["commands"]]["pause"] = False
     client.async_command.side_effect = [state_reply(robot), {}, {"data": state}]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         with pytest.raises(ServiceValidationError) as error:
             await coordinator.async_return_to_base("robot")
@@ -353,7 +360,8 @@ async def test_failed_state_confirmation_never_sends_home(setup_robot):
         VacuulaError("state failed"),
     ]
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         with pytest.raises(HomeAssistantError) as error:
             await coordinator.async_return_to_base("robot")
@@ -378,7 +386,8 @@ async def test_home_failure_is_reported_without_retry(setup_robot):
 
     client.async_command.side_effect = command
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", new_callable=AsyncMock
+        "custom_components.vacuula_client.coordinator.asyncio.sleep",
+        new_callable=AsyncMock,
     ):
         with pytest.raises(HomeAssistantError) as error:
             await coordinator.async_return_to_base("robot")
@@ -402,7 +411,7 @@ async def test_cancel_during_wait_never_sends_home(setup_robot):
         await release.wait()
 
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", side_effect=sleep
+        "custom_components.vacuula_client.coordinator.asyncio.sleep", side_effect=sleep
     ):
         task = asyncio.create_task(coordinator.async_return_to_base("robot"))
         await waiting.wait()
@@ -429,7 +438,7 @@ async def test_pause_delay_and_home_are_serialized_against_other_commands(setup_
         await release.wait()
 
     with patch(
-        "custom_components.vacuula.coordinator.asyncio.sleep", side_effect=sleep
+        "custom_components.vacuula_client.coordinator.asyncio.sleep", side_effect=sleep
     ):
         home = asyncio.create_task(coordinator.async_return_to_base("robot"))
         await waiting.wait()

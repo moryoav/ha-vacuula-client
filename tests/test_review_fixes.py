@@ -20,23 +20,23 @@ from test_integration import entity_id, loaded  # noqa: F401
 from test_server_identity import advertisement
 from test_services import call, setup  # noqa: F401
 
-from custom_components.vacuula import async_remove_config_entry_device
-from custom_components.vacuula.binary_sensor import DESCRIPTIONS as BINARY
-from custom_components.vacuula.binary_sensor import binary_value
-from custom_components.vacuula.client import (
+from custom_components.vacuula_client import async_remove_config_entry_device
+from custom_components.vacuula_client.binary_sensor import DESCRIPTIONS as BINARY
+from custom_components.vacuula_client.binary_sensor import binary_value
+from custom_components.vacuula_client.client import (
     CannotConnect,
     CommandError,
     UnsupportedCommand,
 )
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.entity import async_remove_stale_entity
-from custom_components.vacuula.image import VacuulaMapImage
-from custom_components.vacuula.sensor import DESCRIPTIONS as SENSORS
-from custom_components.vacuula.sensor import sensor_value
-from custom_components.vacuula.services import _BOUNDARY
-from custom_components.vacuula.switch import VacuulaScheduleEventSwitch
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.entity import async_remove_stale_entity
+from custom_components.vacuula_client.image import VacuulaMapImage
+from custom_components.vacuula_client.sensor import DESCRIPTIONS as SENSORS
+from custom_components.vacuula_client.sensor import sensor_value
+from custom_components.vacuula_client.services import _BOUNDARY
+from custom_components.vacuula_client.switch import VacuulaScheduleEventSwitch
 
 
 def unit_coordinator(hass, generation=GEN3):
@@ -360,7 +360,7 @@ async def test_server_outage_reason_is_translated(hass):
 async def test_address_form_defaults_to_vacuula_default_port(hass):
     """Offer the default Vacuula hostname with the current app port."""
     with patch(
-        "custom_components.vacuula.config_flow.async_discover_servers",
+        "custom_components.vacuula_client.config_flow.async_discover_servers",
         new=AsyncMock(return_value=[]),
     ):
         result = await hass.config_entries.flow.async_init(
@@ -381,14 +381,14 @@ async def test_servers_behind_one_proxy_address_stay_separate(hass):
     existing.add_to_hass(hass)
     before = dict(existing.data)
     with (
-        patch("custom_components.vacuula.config_flow.VacuulaClient") as client,
+        patch("custom_components.vacuula_client.config_flow.VacuulaClient") as client,
         patch(
-            "custom_components.vacuula.config_flow."
+            "custom_components.vacuula_client.config_flow."
             "HomeAssistantTCPConnector.async_resolve_host",
             new_callable=AsyncMock,
             return_value=[{"host": "198.51.100.7"}],
         ),
-        patch("custom_components.vacuula.async_setup_entry", return_value=True),
+        patch("custom_components.vacuula_client.async_setup_entry", return_value=True),
     ):
         client.return_value.async_server_info = AsyncMock(return_value={})
         client.return_value.async_robots = AsyncMock(return_value={"R2": {}})
@@ -415,7 +415,7 @@ async def test_address_update_keeps_a_unique_id_held_by_an_ignored_discovery(
         data={"url": "http://old.local:81", "robot_ids": ["R1"]},
     )
     entry.add_to_hass(hass)
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as client:
+    with patch("custom_components.vacuula_client.config_flow.VacuulaClient") as client:
         client.return_value.async_server_info = AsyncMock(return_value={})
         client.return_value.async_robots = AsyncMock(return_value={"R1": {}})
         offline(client, "http://old.local:81")
@@ -559,7 +559,9 @@ async def test_unlisted_robot_keeps_its_schedule_event_switches(hass):
     robot.listed = False
     entity = VacuulaScheduleEventSwitch(coordinator, "robot", "e")
     with (
-        patch("custom_components.vacuula.switch.async_remove_stale_entity") as remove,
+        patch(
+            "custom_components.vacuula_client.switch.async_remove_stale_entity"
+        ) as remove,
         patch.object(entity, "async_write_ha_state"),
     ):
         entity._handle_coordinator_update()

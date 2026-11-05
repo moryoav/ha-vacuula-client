@@ -7,7 +7,7 @@ from contextlib import aclosing
 
 import aiohttp
 
-from custom_components.vacuula.client import VacuulaClient, unwrap
+from custom_components.vacuula_client.client import VacuulaClient, unwrap
 
 
 async def check(url: str) -> None:

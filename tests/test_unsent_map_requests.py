@@ -6,7 +6,7 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError
 from test_map_operation_fences import BOUNDARIES, map_fence  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect, MapRequestNotSent
+from custom_components.vacuula_client.client import CannotConnect, MapRequestNotSent
 
 
 async def test_unsent_promotion_clears_its_new_guard_without_another_read(

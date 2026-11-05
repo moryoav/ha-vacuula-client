@@ -21,19 +21,19 @@ from test_config_flow import discovery
 from test_coordinator import make_client as coordinator_client
 from test_discovery_address import offline
 
-from custom_components.vacuula import async_remove_config_entry_device
-from custom_components.vacuula.client import (
+from custom_components.vacuula_client import async_remove_config_entry_device
+from custom_components.vacuula_client.client import (
     CannotConnect,
     InvalidAuth,
     UnsupportedCommand,
     VacuulaError,
     _SSEParser,
 )
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.image import IMAGE_MAX_AGE, VacuulaMapImage
-from custom_components.vacuula.services import _resolve, async_setup_services
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.image import IMAGE_MAX_AGE, VacuulaMapImage
+from custom_components.vacuula_client.services import _resolve, async_setup_services
 
 
 @pytest.fixture
@@ -244,7 +244,7 @@ async def test_clean_robot_stream_closure_enters_bounded_retry(resource_coordina
         coordinator._stopping = True
 
     coordinator.client.async_robot_events = events
-    with patch("custom_components.vacuula.coordinator.asyncio.sleep", new=retry):
+    with patch("custom_components.vacuula_client.coordinator.asyncio.sleep", new=retry):
         await coordinator._async_robot_stream("TEST-robot")
     assert closed
     assert coordinator.robots["TEST-robot"].state == {"state": 2}
@@ -256,7 +256,9 @@ async def test_offline_resources_refresh_without_robot_command(resource_coordina
     coordinator.client.async_robots.return_value["TEST-robot"]["connected"] = False
     coordinator.client.async_maps.return_value = [{"id": "floor", "name": "Home"}]
     coordinator.client.async_runs.return_value = [{"id": "last-run"}]
-    with patch("custom_components.vacuula.coordinator.monotonic", return_value=1):
+    with patch(
+        "custom_components.vacuula_client.coordinator.monotonic", return_value=1
+    ):
         await coordinator._async_update_data()
         robot = coordinator.robots["TEST-robot"]
         assert not robot.connected
@@ -271,7 +273,9 @@ async def test_offline_resources_refresh_without_robot_command(resource_coordina
         assert robot.maps == [{"id": "floor", "name": "Home"}]
         assert robot.runs == [{"id": "last-run"}]
         assert coordinator.client.async_maps.await_count == 2
-    with patch("custom_components.vacuula.coordinator.monotonic", return_value=301):
+    with patch(
+        "custom_components.vacuula_client.coordinator.monotonic", return_value=301
+    ):
         coordinator.client.async_maps.side_effect = None
         coordinator.client.async_maps.return_value = []
         await coordinator.async_refresh_robot(robot.serial)
@@ -365,7 +369,9 @@ async def test_rediscovery_updates_same_robots_without_duplicate(hass, state):
     entry.add_to_hass(hass)
     entry.mock_state(hass, state)
     with (
-        patch("custom_components.vacuula.config_flow.VacuulaClient") as client_cls,
+        patch(
+            "custom_components.vacuula_client.config_flow.VacuulaClient"
+        ) as client_cls,
         patch.object(hass.config_entries, "async_reload", new=AsyncMock()) as reload,
     ):
         client_cls.return_value.async_server_info = AsyncMock(return_value={})
@@ -405,7 +411,9 @@ async def test_reconfigure_rejects_robots_owned_by_other_entry(hass):
         domain=DOMAIN,
         data={"url": "http://different.local:81", "robot_ids": ["other-robot"]},
     ).add_to_hass(hass)
-    with patch("custom_components.vacuula.config_flow.VacuulaClient") as client_cls:
+    with patch(
+        "custom_components.vacuula_client.config_flow.VacuulaClient"
+    ) as client_cls:
         client_cls.return_value.async_server_info = AsyncMock(return_value={})
         client_cls.return_value.async_robots = AsyncMock(
             return_value={"other-robot": {}}
@@ -432,7 +440,7 @@ async def test_cached_image_follows_map_changes_not_token_refreshes(
     )
     entity = VacuulaMapImage(coordinator, robot.serial, "floor")
     entity.hass = coordinator.hass
-    clock = patch("custom_components.vacuula.image.monotonic", return_value=1000)
+    clock = patch("custom_components.vacuula_client.image.monotonic", return_value=1000)
     with clock as now, patch.object(entity, "async_write_ha_state"):
         first_image = await entity.async_image()
         first_updated = entity.image_last_updated
@@ -570,7 +578,7 @@ async def test_advanced_service_rejects_non_admin_before_resolving_device(
 ):
     """Enforce administrator access before resolving advanced-action device targets."""
     async_setup_services(hass)
-    with patch("custom_components.vacuula.services._resolve") as resolve:
+    with patch("custom_components.vacuula_client.services._resolve") as resolve:
         with pytest.raises(Unauthorized):
             await hass.services.async_call(
                 DOMAIN,

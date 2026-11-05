@@ -5,9 +5,9 @@ from homeassistant.exceptions import HomeAssistantError
 from test_home_intent import SERIAL, gen3_event, paused_robot, sent_names
 from test_home_intent import loaded as home_loaded
 
-from custom_components.vacuula.client import CommandError
-from custom_components.vacuula.const import GEN3
-from custom_components.vacuula.vacuum import VacuulaVacuum
+from custom_components.vacuula_client.client import CommandError
+from custom_components.vacuula_client.const import GEN3
+from custom_components.vacuula_client.vacuum import VacuulaVacuum
 
 loaded = home_loaded
 

@@ -8,7 +8,7 @@ import pytest
 from aiohttp import web
 from aiohttp.test_utils import TestServer
 
-from custom_components.vacuula.client import (
+from custom_components.vacuula_client.client import (
     MAP_PROMOTE_TIMEOUT,
     REQUEST_TIMEOUT,
     CannotConnect,
@@ -278,7 +278,7 @@ async def test_invalid_json(raw):
 
 async def test_json_limit_applies_with_and_without_content_length(monkeypatch):
     """Enforce the response limit using both headers and streamed byte counts."""
-    monkeypatch.setattr("custom_components.vacuula.client.JSON_LIMIT", 8)
+    monkeypatch.setattr("custom_components.vacuula_client.client.JSON_LIMIT", 8)
     for content_length in (20, None):
         client, _, _ = make_client(
             chunks=[b"12345", b"67890"], content_length=content_length
@@ -410,7 +410,7 @@ async def test_sse_incomplete_frame_is_discarded():
 
 def test_sse_size_limit_accumulates_multiline_frames(monkeypatch):
     """Bound both multiline frame accumulation and unterminated line buffering."""
-    monkeypatch.setattr("custom_components.vacuula.client.SSE_LIMIT", 20)
+    monkeypatch.setattr("custom_components.vacuula_client.client.SSE_LIMIT", 20)
     parser = _SSEParser()
     assert parser.feed(b"data: 12345\n") == []
     with pytest.raises(VacuulaError, match="size limit"):

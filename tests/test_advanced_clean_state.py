@@ -8,8 +8,8 @@ import pytest
 from homeassistant.exceptions import HomeAssistantError
 from test_schedule_merge import schedule_setup  # noqa: F401
 
-from custom_components.vacuula.client import CannotConnect
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.client import CannotConnect
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
 
 
 @pytest.mark.parametrize("generation", [GEN3, GEN4])

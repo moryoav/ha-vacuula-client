@@ -6,7 +6,7 @@ from homeassistant.config_entries import SOURCE_IGNORE
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_server_identity import api  # noqa: F401
 
-from custom_components.vacuula.const import DOMAIN
+from custom_components.vacuula_client.const import DOMAIN
 
 
 async def test_reconfigure_address_owned_by_ignored_discovery(hass, api):  # noqa: F811

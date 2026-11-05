@@ -49,17 +49,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          asset="$RUNNER_TEMP/vacuula.zip"
+          asset="$RUNNER_TEMP/vacuula_client.zip"
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             release_api="repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG"
-            asset_id="$(gh api "$release_api" --jq '.assets[] | select(.name == "vacuula.zip") | .id')"
+            asset_id="$(gh api "$release_api" --jq '.assets[] | select(.name == "vacuula_client.zip") | .id')"
             if [ -z "$asset_id" ]; then
               gh release upload "$RELEASE_TAG" "$asset"
             else
               stored_digest="$(gh api "repos/$GITHUB_REPOSITORY/releases/assets/$asset_id" --jq '.digest')"
               local_digest="sha256:$(sha256sum "$asset" | cut -d ' ' -f 1)"
               if [ "$stored_digest" != "$local_digest" ]; then
-                echo "Existing vacuula.zip does not match the tagged integration" >&2
+                echo "Existing vacuula_client.zip does not match the tagged integration" >&2
                 exit 1
               fi
             fi

@@ -48,9 +48,9 @@ jobs:
       - name: Check formatting
         run: python -m ruff format --check .
       - name: Check types
-        run: python -m mypy custom_components/vacuula tools
+        run: python -m mypy custom_components/vacuula_client tools
       - name: Run tests with coverage
-        run: python -m pytest -q --cov=custom_components.vacuula --cov-report=term-missing
+        run: python -m pytest -q --cov=custom_components.vacuula_client --cov-report=term-missing
 
   hassfest:
     name: Hassfest

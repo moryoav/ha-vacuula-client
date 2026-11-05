@@ -19,7 +19,7 @@ robot identifiers and private map or room information from evidence.
 
 ## Development
 
-The integration lives in `custom_components/vacuula/`, tests in `tests/`, and
+The integration lives in `custom_components/vacuula_client/`, tests in `tests/`, and
 development tools in `tools/`. The test environment uses Linux, Python 3.14 and
 the pinned dependencies in `requirements_test.txt`.
 
@@ -30,8 +30,8 @@ python -m pip install -r requirements_test.txt
 python tools/check_docstrings.py
 python -m ruff check .
 python -m ruff format --check .
-python -m mypy custom_components/vacuula tools
-python -m pytest --cov=custom_components.vacuula --cov-report=term-missing
+python -m mypy custom_components/vacuula_client tools
+python -m pytest --cov=custom_components.vacuula_client --cov-report=term-missing
 ```
 
 I require nonempty docstrings on every Python module, class and function,
@@ -58,17 +58,18 @@ logs, robot serial numbers or Home Assistant configuration.
 
 ## Releases
 
-The release tag must match `custom_components/vacuula/manifest.json` and a
+The release tag must match `custom_components/vacuula_client/manifest.json` and a
 nonempty section in `CHANGELOG.md`. The Release workflow checks the integration
-before publishing the tagged component as `vacuula.zip`.
+before publishing the tagged component as `vacuula_client.zip`.
 
 To check an existing tag locally, choose a directory outside the checkout:
 
 ```sh
-python tools/build_hacs_release.py v0.1.15 /tmp/vacuula-release
+python tools/build_hacs_release.py v0.2.0 /tmp/vacuula-release
 ```
 
 The builder uses committed tag contents, not working files. It preserves the
 integration's license and the separate artwork source, license and attribution.
+For tags before v0.2.0, use the builder from that tag for the old `vacuula` domain.
 Please follow the [code of conduct](CODE_OF_CONDUCT.md), and use
 [private vulnerability reporting](SECURITY.md) for security concerns.

@@ -9,10 +9,14 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula.client import CannotConnect, UnsupportedCommand, unwrap
-from custom_components.vacuula.const import DOMAIN, GEN3, GEN4
-from custom_components.vacuula.coordinator import VacuulaCoordinator
-from custom_components.vacuula.data import RobotData
+from custom_components.vacuula_client.client import (
+    CannotConnect,
+    UnsupportedCommand,
+    unwrap,
+)
+from custom_components.vacuula_client.const import DOMAIN, GEN3, GEN4
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client.data import RobotData
 
 
 def make_client():
@@ -236,7 +240,10 @@ async def test_reconnect_streams(coordinator):
     coordinator.client.async_server_events = server_stream
     with (
         patch.object(coordinator, "async_request_refresh", new=AsyncMock()),
-        patch("custom_components.vacuula.coordinator.asyncio.sleep", new=AsyncMock()),
+        patch(
+            "custom_components.vacuula_client.coordinator.asyncio.sleep",
+            new=AsyncMock(),
+        ),
     ):
         await coordinator._async_server_stream()
     assert calls == 2
@@ -253,5 +260,7 @@ async def test_robot_stream_error(coordinator):
         yield {}
 
     coordinator.client.async_robot_events = events
-    with patch("custom_components.vacuula.coordinator.asyncio.sleep", new=AsyncMock()):
+    with patch(
+        "custom_components.vacuula_client.coordinator.asyncio.sleep", new=AsyncMock()
+    ):
         await coordinator._async_robot_stream("TEST-robot")

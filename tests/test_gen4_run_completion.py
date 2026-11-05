@@ -2,9 +2,9 @@
 
 import pytest
 
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.sensor import last_value
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.sensor import last_value
 
 
 def gen4_robot(**fields):

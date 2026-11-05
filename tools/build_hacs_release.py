@@ -12,8 +12,8 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAIN = "vacuula"
-ASSET_NAME = "vacuula.zip"
+DOMAIN = "vacuula_client"
+ASSET_NAME = "vacuula_client.zip"
 TAG_PATTERN = re.compile(r"v\d+\.\d+\.\d+")
 PREFIX = f"custom_components/{DOMAIN}/"
 

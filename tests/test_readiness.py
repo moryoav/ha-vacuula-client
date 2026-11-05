@@ -2,9 +2,9 @@
 
 import pytest
 
-from custom_components.vacuula.binary_sensor import DESCRIPTIONS, binary_value
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.data import RobotData
+from custom_components.vacuula_client.binary_sensor import DESCRIPTIONS, binary_value
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
 
 
 @pytest.mark.parametrize("generation", [GEN3, GEN4])

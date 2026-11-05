@@ -101,15 +101,15 @@ async def test_server_timezone_is_awaited_before_writing_schedule(  # noqa: F811
 
     with (
         patch(
-            "custom_components.vacuula.services.dt_util.async_get_time_zone",
+            "custom_components.vacuula_client.services.dt_util.async_get_time_zone",
             new=AsyncMock(side_effect=load_timezone),
         ) as async_lookup,
         patch(
-            "custom_components.vacuula.services.dt_util.get_time_zone",
+            "custom_components.vacuula_client.services.dt_util.get_time_zone",
             side_effect=AssertionError("Synchronous timezone lookup on the event loop"),
         ),
         patch(
-            "custom_components.vacuula.services.dt_util.get_default_time_zone",
+            "custom_components.vacuula_client.services.dt_util.get_default_time_zone",
             wraps=dt_util.get_default_time_zone,
         ) as default_zone,
     ):
@@ -148,13 +148,13 @@ async def test_unneeded_timezones_are_not_loaded(  # noqa: F811
     events = [] if clear else [{"mode": 1, "day": 1, "startTime": "09:00"}]
     with (
         patch(
-            "custom_components.vacuula.services.dt_util.async_get_time_zone",
+            "custom_components.vacuula_client.services.dt_util.async_get_time_zone",
             new=AsyncMock(
                 side_effect=AssertionError("Unneeded server timezone lookup")
             ),
         ) as async_lookup,
         patch(
-            "custom_components.vacuula.services.dt_util.get_default_time_zone",
+            "custom_components.vacuula_client.services.dt_util.get_default_time_zone",
             wraps=dt_util.get_default_time_zone,
         ) as default_zone,
     ):
@@ -193,7 +193,7 @@ async def test_clock_metadata_is_rechecked_after_timezone_lookup(  # noqa: F811
         return server_timezone
 
     with patch(
-        "custom_components.vacuula.services.dt_util.async_get_time_zone",
+        "custom_components.vacuula_client.services.dt_util.async_get_time_zone",
         new=AsyncMock(side_effect=replace_server_info),
     ) as async_lookup:
         if reject:

@@ -3,9 +3,9 @@
 import pytest
 from homeassistant.exceptions import ServiceValidationError
 
-from custom_components.vacuula.const import GEN3, GEN4
-from custom_components.vacuula.data import RobotData
-from custom_components.vacuula.vacuum import cleaning_target
+from custom_components.vacuula_client.const import GEN3, GEN4
+from custom_components.vacuula_client.data import RobotData
+from custom_components.vacuula_client.vacuum import cleaning_target
 
 
 @pytest.mark.parametrize("generation", [GEN3, GEN4])

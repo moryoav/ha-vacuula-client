@@ -5,9 +5,9 @@ from unittest.mock import MagicMock
 from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.vacuula import async_remove_entry
-from custom_components.vacuula.const import DOMAIN
-from custom_components.vacuula.coordinator import VacuulaCoordinator
+from custom_components.vacuula_client import async_remove_entry
+from custom_components.vacuula_client.const import DOMAIN
+from custom_components.vacuula_client.coordinator import VacuulaCoordinator
 
 
 async def test_entry_removal_cleans_reconstructed_inflight_issue(hass):
