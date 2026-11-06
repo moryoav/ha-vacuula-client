@@ -1,21 +1,12 @@
-# Vacuula artwork
+# Vacuula Client artwork
 
-The integration uses the official Vacuula vampire-robot artwork from
-[`app/public/favicon-vacuula.svg`](https://github.com/vacuula/vacuula/blob/fa372600e04917f81074f2e8a336d9c6a2966d1e/app/public/favicon-vacuula.svg)
-at upstream commit `fa372600e04917f81074f2e8a336d9c6a2966d1e`.
-The original SVG is preserved as
-[`vacuula.svg`](../../custom_components/vacuula_client/brand/vacuula.svg). It matches the
-reviewed Vacuula 1.0.0 source. The source artwork's colors, shapes and effects are
-unchanged; the packaged images are rendered, trimmed and resized versions.
+I use the robot-vacuum illustration supplied as `5800.jpg` for this independent
+integration. I cropped the image to its pale blue rounded-square tile, removed
+the outer white background and cleaned the transparent edges. The processed
+master is preserved as [`robot-vacuum.png`](robot-vacuum.png).
 
-The artwork comes from the [Vacuula project](https://github.com/vacuula/vacuula)
-under its upstream GNU Affero General Public License version 3. The complete
-license is preserved in
-[`LICENSE-AGPL-3.0.txt`](../../custom_components/vacuula_client/brand/LICENSE-AGPL-3.0.txt).
-The original SVG, license and attribution notice ship with the images in
-`custom_components/vacuula_client/brand/`, including HACS and manual installations.
-The Python integration implementation is independently written. Product names
-and artwork identify the connected project and do not imply its endorsement.
+The packaged icons include an [artwork notice](../../custom_components/vacuula_client/brand/NOTICE.txt).
+Product names identify the connected project and do not imply endorsement.
 
 ## Packaged images
 
@@ -24,12 +15,11 @@ and artwork identify the connected project and do not imply its endorsement.
 | `custom_components/vacuula_client/brand/icon.png` | 256 × 256 | Transparent, lossless, interlaced RGBA PNG |
 | `custom_components/vacuula_client/brand/icon@2x.png` | 512 × 512 | Transparent, lossless, interlaced RGBA PNG |
 
-The square source serves as both icon and logo. The
+The square artwork serves as both icon and logo. The
 [Home Assistant branding guide](https://contributors.home-assistant.io/core/integrations/brands/)
 asks for icon files only in this case; Home Assistant provides logo and dark-theme
-fallbacks. The original colors are legible on white and dark backgrounds, so
-separate dark images are unnecessary. Empty surrounding space is removed, with
-only the transparent space needed to keep the artwork undistorted in a square.
+fallbacks. The pale blue tile keeps the robot legible on light and dark backgrounds,
+so separate dark images are unnecessary. The outer corners are transparent.
 
 Custom integrations bundle these files in `brand/` on Home Assistant 2026.3 and
 newer. They take precedence over CDN images without a manifest setting or a
@@ -38,41 +28,21 @@ the assets must move to the central brands repository.
 
 ## Reproduce the PNGs
 
-Run from the repository root with Node.js, npm and ImageMagick 7 installed. The
-SVG renderer is a development tool only. Keep its dependencies outside the
-repository and the installed integration:
+Run from the repository root with ImageMagick 7.1.2 installed. The processed
+master preserves the crop and transparency so resizing needs no background tools:
 
 ```sh
-BRAND_TOOLS=$(mktemp -d)
-npm install --prefix "$BRAND_TOOLS" --ignore-scripts --no-audit --no-fund \
-  --save-exact @resvg/resvg-js@2.6.2
-node - "$BRAND_TOOLS" <<'JS'
-const { readFileSync, writeFileSync } = require('node:fs');
-const { resolve, join } = require('node:path');
-const tools = resolve(process.argv[2]);
-const { Resvg } = require(join(tools, 'node_modules/@resvg/resvg-js'));
-const svg = readFileSync('custom_components/vacuula_client/brand/vacuula.svg');
-const png = new Resvg(svg, {
-  fitTo: { mode: 'width', value: 2048 },
-  font: { loadSystemFonts: false },
-}).render().asPng();
-writeFileSync(join(tools, 'rendered.png'), png);
-JS
-magick "$BRAND_TOOLS/rendered.png" -trim +repage -background none \
-  -gravity center -extent '%[fx:max(w,h)]x%[fx:max(w,h)]' \
-  -filter Lanczos -resize 512x512 -strip -define png:compression-level=9 \
-  -interlace PNG PNG32:custom_components/vacuula_client/brand/icon@2x.png
-magick custom_components/vacuula_client/brand/icon@2x.png -filter Lanczos \
-  -resize 256x256 -strip -define png:compression-level=9 -interlace PNG \
+magick docs/branding/robot-vacuum.png -filter Lanczos -resize 512x512 \
+  -strip -define png:compression-level=9 -interlace PNG \
+  PNG32:custom_components/vacuula_client/brand/icon@2x.png
+magick docs/branding/robot-vacuum.png -filter Lanczos -resize 256x256 \
+  -strip -define png:compression-level=9 -interlace PNG \
   PNG32:custom_components/vacuula_client/brand/icon.png
 ```
 
-The packaged images were rendered with resvg-js 2.6.2 and ImageMagick 7.1.2.
-
 ## Verify the local installation
 
-Restart Home Assistant after initially adding the `brand/` directory so its
-integration metadata detects the folder. Authenticated requests to
+Restart Home Assistant after updating the integration. Authenticated requests to
 `/api/brands/integration/vacuula_client/icon.png?placeholder=no` and
 `/api/brands/integration/vacuula_client/icon@2x.png?placeholder=no` must return HTTP 200
 and bytes matching the installed PNGs. Check the `logo` and `dark_` fallback

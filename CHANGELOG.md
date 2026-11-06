@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Replaced the integration and README branding with the supplied robot-vacuum illustration, cropped to its blue tile with transparent outer corners and resized to 256- and 512-pixel icons.
+- Updated artwork sources, attribution and reproduction instructions, and removed the previous vampire-robot artwork and its separate license.
+
 ## 0.2.0
 
 - Breaking: Renamed the Home Assistant integration domain and component folder from `vacuula` to `vacuula_client` to avoid overwriting another integration already listed in HACS. Existing users must remove this repository's old entry, update, restart Home Assistant and set up Vacuula Client again. Home Assistant settings and recovery guards do not migrate; resolve pending floorplan repairs before removing the old entry.

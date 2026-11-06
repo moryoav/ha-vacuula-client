@@ -3,7 +3,7 @@
 **I maintain this independent, fan-made repository. It is not affiliated with the Vacuula team and has not been reviewed, checked, or endorsed by them.**
 
 <p align="center">
-  <img src="custom_components/vacuula_client/brand/icon@2x.png" alt="Vacuula vampire robot" width="128" height="128">
+  <img src="custom_components/vacuula_client/brand/icon@2x.png" alt="Vacuula Client robot vacuum" width="128" height="128">
 </p>
 
 [![HACS default repository](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](#installation)
@@ -543,7 +543,7 @@ map edit, or factory reset is needed for read-only hardware validation.
 
 Stable `vX.Y.Z` tags run the Python checks and Hassfest, then publish a GitHub
 release with **vacuula_client.zip**. The archive contains only the tagged integration
-files at its root, including artwork sources, licenses and attribution. HACS
+files at its root, including the license and artwork notice. HACS
 uses this asset; it does not offer the default branch as an installation version.
 
 The **Release** workflow also accepts an existing v0.2.0 or newer tag for
@@ -560,14 +560,13 @@ packages the previous `vacuula` domain.
 
 ## Artwork
 
-The integration includes the official Vacuula artwork in Home Assistant's local
-`brand/` format. See [artwork sources, licensing and reproduction](docs/branding/README.md).
+I use a robot-vacuum illustration supplied for this integration in Home Assistant's
+local `brand/` format. See [artwork sources and reproduction](docs/branding/README.md).
 
 ## Project policies and license
 
 I maintain this independent integration under the [MIT License](LICENSE).
-The Vacuula artwork keeps its separate upstream AGPL-3.0 license, source and
-attribution in `brand/`; the integration archive includes both sets of notices.
+The integration archive includes the license and an artwork notice in `brand/`.
 
 See [support](SUPPORT.md), [contributing](CONTRIBUTING.md),
 [security reporting](SECURITY.md), the [code of conduct](CODE_OF_CONDUCT.md)
